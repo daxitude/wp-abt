@@ -1,0 +1,73 @@
+.input-error label{
+	color: red;
+}
+.input-error input,
+.input-error select,
+.input-error .append {
+	color: red;
+	border-color: red;
+}
+
+.append {
+	line-height: 14px;
+	padding: 4px 5px;
+	border: 1px solid #DFDFDF;
+	display: inline-block;
+	font-size: 13px;
+	text-align: center;
+	vertical-align: middle;
+	border-top-right-radius: 3px;
+	border-bottom-right-radius: 3px;
+	background: #F0F0F0;
+	height: 23px;
+	width: 2em;
+	box-sizing: border-box;
+}
+.append.reqd {
+	font-family: 'apple symbols';
+	font-weight: bold;
+	color: #DB8206;
+}
+.regular-text {
+	font-size: 12px;
+	height: 23px;
+}
+.appended {
+	border-top-right-radius: 0;
+	border-bottom-right-radius: 0;
+	margin-right: -2px;
+}
+.regular-text.appended {
+	width: 23em;
+}
+.postbox .hndle {
+	cursor: initial;
+}
+
+.label {
+	display: inline;
+	padding: 2px 4px;
+	text-align: center;
+	border-radius: 2px;
+	background: #aaa;
+	color: #fff;
+	text-shadow: 0 1px 0 #636363;
+}
+.label.badge {
+	border-radius: 11px;
+}
+.label.info {
+	background: #9D9DEC;
+	text-shadow: 0 1px 0 #4747DC;
+}
+.label.warning {
+	background: #EF8E06;
+	text-shadow: 0 1px 0 #8B5304;
+}
+.label.success {
+	background: #19BE5B;
+	text-shadow: 0 1px 0 #0D632F;
+}
+
+
+

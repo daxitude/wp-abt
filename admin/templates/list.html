@@ -1,0 +1,51 @@
+<div class="wrap">
+	<div id="icon-edit-pages" class="icon32"><br></div>
+	<h2>
+		A/B Tests
+		<a href="admin.php?page=abt_experiment" class="add-new-h2">Add New</a>
+	</h2>
+	
+	<ul class="subsubsub">
+		<li class="all"><a href="admin.php?page=abt_list" class="current">All <span class="count">({{count_total}})</span></a> |</li>
+		<li class="publish"><a href="admin.php?page=abt_list&amp;experiment[status]=1">Running <span class="count">({{count_running}})</span></a></li>
+	</ul>
+	
+	<table class="wp-list-table widefat fixed users" cellspacing="0">
+		
+		<thead>
+		<tr>
+			<th scope="col" id="cb" class="manage-column column-cb check-column"><input type="checkbox"></th>
+			<th scope="col" id="" class="manage-column column-posts" style="">Name</th>
+			<th scope="col" id="" class="manage-column column-posts" style="">Status</th>
+			<th scope="col" id="" class="manage-column column-posts" style="">Visits</th>
+			<th scope="col" id="" class="manage-column column-posts" style="">Conversions</th>
+			<th scope="col" id="" class="manage-column column-posts" style="">Goal</th>
+			<th scope="col" id="" class="manage-column column-posts" style="">Start</th>
+			<th scope="col" id="" class="manage-column column-posts" style="">End</th>
+		</tr>
+		</thead>
+		
+		<tbody id="the-list" class="list">
+			{{#exps}}
+			<tr class="alternate">
+				<th scope="row" class="check-column"><input type="checkbox" name="post[]" value="{{id}}"></th>
+				<td class="post-title page-title column-title">
+					<a href="?page=abt_experiment&amp;id={{id}}" title="">{{experiment_name}}</a>
+					<div class="row-actions">
+						<span class="edit"><a href="?page=abt_experiment&amp;id={{id}}">Edit</a> | </span>
+						<span class="delete"><a class="submitdelete" onclick="return showNotice.warn();" href="?page=abt_experiment&amp;action=delete&amp;experiment[id]={{id}}">Delete</a></span>
+					</div>
+				</td>
+				<td class="">{{{status_text}}}</td>
+				<td class="">{{total_visits}}</td>
+				<td class="">{{total_conversions}}</td>
+				<td class=""><a href="{{goal_page_link}}" title="">{{goal_name}} ({{post_title}})</a></td>
+				<td class="date column-date">{{start_date_f}}</td>
+				<td class="date column-date">{{end_date_f}}</td>
+			</tr>
+			{{/exps}}
+		</tbody>
+		
+	</table>
+
+</div>

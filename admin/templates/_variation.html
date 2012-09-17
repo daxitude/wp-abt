@@ -1,0 +1,17 @@
+<tr class="alternate">
+	<th scope="row" class="check-column"><input type="checkbox" name="post[]" value="{{id}}"></th>
+	<td class="post-title page-title column-title">
+		{{variation_name}} {{#base}}[Base]{{/base}}
+		<div class="row-actions">
+			<span class="edit"><a href="?page=abt_variation&amp;experiment_id={{exp.id}}&amp;id={{id}}">Edit</a></span>
+			{{#exp.is_ready}}
+			<span class="delete"> | <a class="submitdelete" onclick="return showNotice.warn();" href="?page=abt_variation&amp;action=delete&amp;variation[id]={{id}}&amp;variation[experiment_id]={{exp.id}}">Delete</a></span>
+			{{/exp.is_ready}}
+		</div>
+	</td>
+	<td class=""><a href="{{get_page_link}}" title="">{{post_title}}</a></td>
+	<td class="">{{visits}}</td>
+	<td class="">{{conversions}}</td>
+	<td class="">{{rate}}</td>
+	<td class="">{{p_value}}</td>
+</tr>

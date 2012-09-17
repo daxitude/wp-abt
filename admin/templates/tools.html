@@ -1,0 +1,73 @@
+<div class="wrap">
+	<div id="icon-tools" class="icon32"><br></div>
+	<h2>
+		A/B Tests Tools
+	</h2>
+	
+	<h3 class="title">Estimate Experiment Duration</h3>
+	<p>
+		Get an estimate of how many days it will take for an experiment to reach your desired confidence interval!
+	</p>
+	
+	<form id="days-to-confidence" method="post" action="">
+	<table class="form-table">
+		<tbody>
+			<tr valign="top">
+				<th scope="row">
+					<label for="conf">Confidence Interval</label>
+				</th>
+				<td>
+					<input name="conf" type="text" value=".9" size="4">
+				</td>
+			</tr>
+			
+			<tr valign="top">
+				<th scope="row">
+					<label for="convRate">Anticipated Conversion Rate (%)</label>
+				</th>
+				<td>
+					<input name="convRate" type="text" value="10" size="4">
+				</td>
+			</tr>
+			
+			<tr valign="top">
+				<th scope="row">
+					<label for="effect">Desired Effect (%)</label>
+				</th>
+				<td>
+					<input name="effect" type="text" value="30" size="4">
+				</td>
+			</tr>
+			
+			<tr valign="top">
+				<th scope="row">
+					<label for="views">Anticipated Views per Day</label>
+				</th>
+				<td>
+					<input name="views" type="text" value="50" size="4">
+				</td>
+			</tr>
+			
+			<tr valign="top">
+				<th scope="row">
+					<label for="vars">Number of Variations</label>
+				</th>
+				<td>
+					<input name="vars" type="text" value="2" size="4">
+				</td>
+			</tr>
+				  
+		</tbody>
+	</table>
+
+	<br>
+	
+	<p>
+		Number of days needed in Experiment: &nbsp; <strong id="numDays" class="label info"></strong>
+	</p>
+	
+	<br>
+
+	<input type="submit" class="button-primary" value="Calculate!">
+	</form>
+</div>

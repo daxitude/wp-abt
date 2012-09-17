@@ -1,0 +1,137 @@
+<div class="wrap">
+	<div id="icon-users" class="icon32"><br></div>
+	<h2>
+		{{^isNew}}A/B Tests - {{exp.experiment_name}} Experiment{{/isNew}}
+		{{#isNew}}A/B Tests - New Experiment{{/isNew}}
+	</h2>
+	
+	<div id="poststuff">
+		<div id="post-body" class="metabox-holder columns-2">
+			<div id="postbox-container-2" class="postbox-container">
+				<div id="seo-meta-fields" class="postbox ">
+					<div class="handlediv" title="Click to toggle"><br></div>
+					<h3 class="hndle"><span>Experiment Details</span></h3>
+					<div class="inside">
+						<form method="post" action="">
+						<input type="hidden" name="wp_meta_box_nonce" value="e8e0f050ad">
+						<table class="form-table">
+							<tbody>
+								<tr valign="top" class="{{#errors.experiment_name}}input-error{{/errors.experiment_name}}">
+									<th scope="row"><label for="experiment[experiment_name]">Experiment Name</label></th>
+									<td>
+										<input name="experiment[experiment_name]" type="text" id="experiment_name" value="{{exp.experiment_name}}" class="regular-text appended"><span class="append reqd">&#x02605;</span>
+									</td>
+								</tr>
+
+								{{^isNew}}
+								<tr valign="top">
+									<th scope="row">Start Date</th>
+									<td>{{exp.start_date_f}}</td>
+								</tr>
+
+								<tr valign="top">
+									<th scope="row">End Date</th>
+									<td>{{exp.end_date_f}}</td>
+								</tr>
+
+								<tr valign="top">
+									<th scope="row">Status</th>
+									<td>
+										{{{exp.status_text}}}
+										<input type="hidden" name="experiment[status]" value="{{exp.status}}">
+										{{#exp.can_start}}
+										&nbsp; <a class="button-primary" data-notice="Confirm: ready to start the experiment!" href="?page=abt_experiment&amp;action=update&amp;experiment[id]={{exp.id}}&amp;experiment[status]=1">Start</a>
+										{{/exp.can_start}}
+										{{#exp.can_stop}}
+										&nbsp; <a class="button-primary" data-notice="Are you sure you want to stop this experiment before it has completed?" href="?page=abt_experiment&amp;action=update&amp;experiment[id]={{exp.id}}&amp;experiment[status]=2">Stop</a>
+										{{/exp.can_stop}}
+									</td>
+								</tr>
+								{{/isNew}}
+
+								<tr valign="top" class="{{#errors.goal_name}}input-error{{/errors.goal_name}}">
+									<th scope="row"><label for="experiment[goal_name]">Goal Name</label></th>
+									<td><input name="experiment[goal_name]" type="text" id="goal_name" class="regular-text appended" value="{{exp.goal_name}}"><span class="append reqd">&#x02605;</span></td>
+								</tr>
+
+								<tr valign="top" class="{{#errors.goal_page_id}}input-error{{/errors.goal_page_id}}">
+									<th scope="row"><label for="experiment[goal_page_id]">Goal Page</label></th>
+									<td>
+										{{#isNew}}{{#pages}}{{exp.goal_page_id}}{{/pages}}{{/isNew}}
+										{{^isNew}}
+											<a href="{{exp.goal_page_link}}" title="">{{exp.post_title}}</a>
+											<input type="hidden" name="experiment[goal_page_id]" value="{{exp.goal_page_id}}">
+										{{/isNew}}
+									</td>
+								</tr>
+
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+
+			<div id="postbox-container-1" class="postbox-container">
+				<div class="postbox">
+					<div class="handlediv" title="Click to toggle"><br></div>
+					<h3 class="hndle"><span>Stats</span></h3>
+					<div class="inside">
+							<p>Desired Confidence Interval</p>
+							<label class="screen-reader-text" for="experiment[confidence]">Desired Confidence Interval</label>
+							<select name="experiment[confidence]">
+								<option value="{{exp.confidence}}" selected>{{exp.confidence}}</option>
+								<option value=".8">0.80</option>
+								<option value=".85">0.85</option>
+								<option value=".9">0.90</option>
+								<option value=".95">0.95</option>								
+							</select>
+							<p>Desired Observed Effect</p>
+							<p>
+								<label class="screen-reader-text" for="experiment[effect]">Desired Observed Effect</label>
+								<input name="experiment[effect]" type="text" size="4" value="{{exp.effect}}" class="appended"><span class="append">%</span>
+							</p>
+					</div>
+				</div>
+			</div>
+		</div>		
+	</div>
+
+	<br>
+
+	<div class="clear"></div>
+	{{^isNew}}
+	<table class="wp-list-table widefat fixed users" cellspacing="0">
+		<thead>
+			<tr>
+				<th scope="col" id="cb" class="manage-column column-cb check-column"><input type="checkbox"></th>
+				<th scope="col" id="" class="manage-column column-posts" style="">Variation Name</th>
+				<th scope="col" id="" class="manage-column column-posts" style="">Page</th>
+				<th scope="col" id="" class="manage-column column-posts" style="">Visits</th>
+				<th scope="col" id="" class="manage-column column-posts" style="">Conversions</th>
+				<th scope="col" id="" class="manage-column column-posts" style="">Conversion Rate</th>
+				<th scope="col" id="" class="manage-column column-posts" style="">Confidence</th>
+			</tr>
+		</thead>
+		<tbody id="variations-list" class="list">
+	{{/isNew}}
+			{{#vars}}
+				{{> _variation}}
+			{{/vars}}
+	{{^isNew}}
+		</tbody>
+	</table>
+	{{/isNew}}
+	<br>
+	<input type="hidden" name="action" value="{{action}}">
+	<input type="hidden" name="experiment[id]" value="{{exp.id}}">
+	{{^isNew}}
+	{{#exp.is_ready}}
+	<a id="add-variation" class="button" href="?page=abt_variation&amp;experiment_id={{exp.id}}" tabindex="4">Add Variation</a>
+	{{/exp.is_ready}}
+	{{/isNew}}
+	<input type="submit" class="button-primary" value="Save Changes" tabindex="5" accesskey="p">
+	{{^isNew}}
+	<a class="button" href="?page=abt_experiment&amp;action=delete&amp;experiment[id]={{exp.id}}" data-notice="Are you sure you want to delete this experiment?">Delete Experiment</a>
+	{{/isNew}}
+	</form>
+</div>
