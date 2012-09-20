@@ -1,16 +1,11 @@
 <?php
+/*
+ * a few helpers, some shared by admin and public
+ */
+// parses the requested page, eg abt_list, so the plugin can render the appropriate page
 
-function abt_admin() {
-	$page = isset($_GET['page']) ? explode('_', $_GET['page']) : false;
-	return (is_admin() && $page && $page[0] == 'abt') ? $page[1] : false;
-}
-
-function abt_format_date($date, $format = 'D, M j') {
-	return strtotime($date) ? date($format, strtotime($date)) : false;
-}
-
+// redirect to a specified url. if headers already sent, will do a meta refresh
 function abt_redirect_to($url) {
-
 	if( !headers_sent() ) {
 		header('location: ' . urldecode($url));
 		exit;
@@ -19,23 +14,24 @@ function abt_redirect_to($url) {
 	exit('<meta http-equiv="refresh" content="0; url=' . urldecode($url) . '"/>');
 	return;
 }
-
+// merge first object into second object
+// this is used to merge $_GET params into a model instance
 function abt_merge($a, $b) {
 	foreach ((object) $a as $key => $value) {
 		$b->$key = $value;
 	}
 	return (object) $b;
 }
-
+// get an option from wp_options
 function abt_get_option($option) {
 	$option = get_option('abt_' . $option);
 	return $option;
 }
-
+// update an option from wp_options
 function abt_update_option($option, $value) {
 	return update_option('abt_' . $option, $value);
 }
-
+// add an option from wp_options
 function abt_add_option($option, $value) {
 	return add_option('abt_' . $option, $value);
 }

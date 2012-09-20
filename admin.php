@@ -1,17 +1,14 @@
 <?php
 
-// require needed files in admin folder
-$abt_admin_base = $abt_base . 'admin/';
+// create new mgr instance
+$abt = new ABT_Admin_Mgr();
 
-require_once $abt_admin_base . 'helpers.php';
-require_once $abt_admin_base . 'mustache.php';
-require_once $abt_admin_base . 'admin_page.php';
+// register the admin pages by class name
+$abt->register('ABT_View_Experiments');
+$abt->register('ABT_View_Settings');
+$abt->register('ABT_View_Tools');
+$abt->register('ABT_View_Experiment');
+$abt->register('ABT_View_Variation');
 
-require_once $abt_admin_base . 'models/experiment.php';
-require_once $abt_admin_base . 'models/variation.php';
-
-require_once $abt_admin_base . 'views/list.php';
-require_once $abt_admin_base . 'views/experiment.php';
-require_once $abt_admin_base . 'views/variation.php';
-require_once $abt_admin_base . 'views/settings.php';
-
+// run the routing to the requested path
+$abt->run();

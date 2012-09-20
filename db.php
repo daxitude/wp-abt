@@ -1,10 +1,18 @@
 <?php
-
-class ABT_DB {
+/*
+ * abtstract class to interact with the WP database
+ * stored in wp_options
+ *		abt_version			number reflecting current plugin version
+ *		abt_filter_ip_on	bool, whether ip filtering is on/off
+ * 		abt_filter_ip		serialized array of ips to filter
+ */
+abstract class ABT_DB {
 	
-	static $version = 0.10;
+	// current plugin version to check against for db migrations 
+	public static $version = 0.20;
 	
-	static function init() {
+	public static function init() {
+		// do an "install" if the plugin version stored in wp_options doesn't match
 		$stored_ver = get_option('abt_version');
 		if ( $stored_ver != self::$version ) {
 			self::install();
@@ -12,11 +20,14 @@ class ABT_DB {
 
 //		add_action( 'deleted_post', array( __CLASS__, 'post_deleted' ) );
 		
+		// plugin options for wp_options table
+		// @todo could serialize these together into one row
 		if (!get_option('abt_filter_ip')) add_option('abt_filter_ip', '');
 		if (!get_option('abt_filter_ip_on')) add_option('abt_filter_ip_on', 0);
 	}
-
-	static function install() {
+	
+	// define two tables to add
+	public static function install() {
 		self::abt_install_table( 'abt_experiments', "
 			id bigint(20) unsigned NOT NULL auto_increment,
 			experiment_name varchar(255) NOT NULL default '',
@@ -43,14 +54,18 @@ class ABT_DB {
 			KEY post_id (post_id)
 		" );
 		
+		// if we're "installing" then we need to update the stored version
 		update_option( 'abt_version', self::$version);
 	}
 	
-	static function uninstall() {
+	// delete tables and options on uninstall. called in uninstall.php
+	public static function uninstall() {
 		self::abt_uninstall_table( 'abt_experiments' );
 		self::abt_uninstall_table( 'abt_variations' );
 
 		delete_option( 'abt_version' );
+		delete_option( 'abt_filter_ip' );
+		delete_option( 'abt_filter_ip_on' );
 	}
 
 /*
@@ -58,8 +73,9 @@ class ABT_DB {
 		
 	}
 */
-	
-	private function abt_install_table($name, $columns) {
+	// "install" a table. dbDelta checks the schema against current install and
+	// can make add/modifies to the table config
+	private static function abt_install_table($name, $columns) {
 		global $wpdb;
 		
 		$wpdb->tables[] = $name;
@@ -71,14 +87,13 @@ class ABT_DB {
 		dbDelta( "CREATE TABLE $table_name ( $columns );" );
 	}
 	
-	private function abt_uninstall_table($name) {
+	// uninstall a table
+	private static function abt_uninstall_table($name) {
 		global $wpdb;		
 		$wpdb->query( "DROP TABLE IF EXISTS " . $wpdb->prefix . $name );
 	}
 
 }
-
-ABT_DB::init();
 
 
 

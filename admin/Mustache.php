@@ -1,7 +1,7 @@
 <?php
 
-/**
- *
+/*
+ * singleton class for pass data to Mustache to render
  */
 abstract class ABT_Mustache {
 

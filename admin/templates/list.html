@@ -4,7 +4,7 @@
 		A/B Tests
 		<a href="admin.php?page=abt_experiment" class="add-new-h2">Add New</a>
 	</h2>
-	
+	{{> _error_banner}}
 	<ul class="subsubsub">
 		<li class="all"><a href="admin.php?page=abt_list" class="current">All <span class="count">({{count_total}})</span></a> |</li>
 		<li class="publish"><a href="admin.php?page=abt_list&amp;experiment[status]=1">Running <span class="count">({{count_running}})</span></a></li>
@@ -33,7 +33,7 @@
 					<a href="?page=abt_experiment&amp;id={{id}}" title="">{{experiment_name}}</a>
 					<div class="row-actions">
 						<span class="edit"><a href="?page=abt_experiment&amp;id={{id}}">Edit</a> | </span>
-						<span class="delete"><a class="submitdelete" onclick="return showNotice.warn();" href="?page=abt_experiment&amp;action=delete&amp;experiment[id]={{id}}">Delete</a></span>
+						<span class="delete"><a class="submitdelete" onclick="return showNotice.warn();" href="?page=abt_experiment&amp;action=delete&amp;experiment[id]={{id}}&amp;_nonce={{_nonce}}">Delete</a></span>
 					</div>
 				</td>
 				<td class="">{{{status_text}}}</td>

@@ -1,21 +1,21 @@
 <?php
-
-if ( !class_exists( 'ABT_DB_Model' ) )
-	require dirname(__FILE__) . '/db_model.php';
-
 /*
-id bigint(20) unsigned NOT NULL auto_increment,
-experiment_id bigint(20) unsigned NOT NULL default '0',
-post_id bigint(20) unsigned NOT NULL default '0',
-variation_name varchar(255) NOT NULL default '',
-visits int(11) NOT NULL default '0',
-conversions int(11) NOT NULL default '0',
-base BOOLEAN NOT NULL DEFAULT '0',
-PRIMARY KEY (id),
-KEY id (id),
-key post_id (post_id)
-*/
-class Variation extends ABT_DB_Model {
+ * Variation model
+ *
+	Table def
+	==========
+	id bigint(20) unsigned NOT NULL auto_increment,
+	experiment_id bigint(20) unsigned NOT NULL default '0',
+	post_id bigint(20) unsigned NOT NULL default '0',
+	variation_name varchar(255) NOT NULL default '',
+	visits int(11) NOT NULL default '0',
+	conversions int(11) NOT NULL default '0',
+	base BOOLEAN NOT NULL DEFAULT '0',
+	PRIMARY KEY  (id),
+	KEY experiment_id (experiment_id),
+	KEY post_id (post_id)
+ */
+class ABT_Model_Variation extends ABT_Model_Base {
 	
 	// instance methods that are stored in db
 	public $id;
@@ -38,6 +38,7 @@ class Variation extends ABT_DB_Model {
 	 * static methods for fetching from database
 	 */
 	
+	// joins with posts table
 	static function by_id($id) {
 		$db = self::get_db();		
 		$table = self::get_db_table();
@@ -88,6 +89,7 @@ class Variation extends ABT_DB_Model {
 		return $var ? new self($var) : false;
 	}
 	
+	// get an experiment's variation with least number of views
 	static function get_least_viewed($experiment_id) {
 		$db = self::get_db();		
 		$table = self::get_db_table();
@@ -102,6 +104,7 @@ class Variation extends ABT_DB_Model {
 		return $var ? new self($var) : false;
 	}
 	
+	// get the "base" variation. 
 	static function get_base_variation($experiment_id) {
 		$db = self::get_db();		
 		$table = self::get_db_table();
@@ -115,6 +118,8 @@ class Variation extends ABT_DB_Model {
 		return $var ? new self($var) : false;
 	}
 	
+	// get the whole column of post ids. used to filter out options from the html <select>.
+	// chinsy way to enforce uniqueness without any validation
 	static function get_post_ids() {
 		$db = self::get_db();		
 		$table = self::get_db_table();
@@ -125,10 +130,12 @@ class Variation extends ABT_DB_Model {
 	 * some helper methods for working with an instance
 	 */
 	
+	// calc conversion rate
 	public function rate() {
 		return ($this->visits > 0) ? round($this->conversions / $this->visits, 4) * 100 . '%' : '0';
 	}
 	
+	// get the page's permalink
 	public function get_page_link() {
 		return get_permalink($this->post_id);
 	}
@@ -161,7 +168,8 @@ class Variation extends ABT_DB_Model {
 		return $var;
 	}
 	
-	public function norm_dist($x) {
+	// calc std normal distribution val for a given z-score
+	private function norm_dist($x) {
 		$d1 = 0.0498673470;
 		$d2 = 0.0211410061;
 		$d3 = 0.0032776263;
@@ -180,8 +188,9 @@ class Variation extends ABT_DB_Model {
 		return $t;
 	}
 	
+	// calc a p-value
 	public function p_value() {
-		$base = Variation::get_base_variation($this->experiment_id);
+		$base = self::get_base_variation($this->experiment_id);
 		if ($this->base || $this->visits < 15 || $base->visits < 15) return '--';
 		$base_conv_rate = $base->conversions / $base->visits;
 		$var_conv_rate = $this->conversions / $this->visits;
@@ -193,7 +202,8 @@ class Variation extends ABT_DB_Model {
 	
 	
 	/*
-	 * these 4 methods wont' work < php 5.3 so going to reluctantly repeat them in sub classes
+	 * these 4 methods wont' work < php 5.3 (no static:: or get_called_class())
+	 * so going to reluctantly repeat them in sub classes for now
 	 */
 	
 	// see wp-db.php line 1275

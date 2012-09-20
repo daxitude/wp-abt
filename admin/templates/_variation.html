@@ -5,7 +5,7 @@
 		<div class="row-actions">
 			<span class="edit"><a href="?page=abt_variation&amp;experiment_id={{exp.id}}&amp;id={{id}}">Edit</a></span>
 			{{#exp.is_ready}}
-			<span class="delete"> | <a class="submitdelete" onclick="return showNotice.warn();" href="?page=abt_variation&amp;action=delete&amp;variation[id]={{id}}&amp;variation[experiment_id]={{exp.id}}">Delete</a></span>
+			<span class="delete"> | <a class="submitdelete" onclick="return showNotice.warn();" href="?page=abt_variation&amp;action=delete&amp;variation[id]={{id}}&amp;variation[experiment_id]={{exp.id}}&amp;_nonce={{_nonce}}">Delete</a></span>
 			{{/exp.is_ready}}
 		</div>
 	</td>

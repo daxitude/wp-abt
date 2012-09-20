@@ -1,4 +1,4 @@
-
+// in case we want to namespace. don't really need this right now.
 var ABT = {};
 
 (function ($) {
@@ -8,7 +8,7 @@ var ABT = {};
 		var msg = msg || 'Are you sure?';
 		return confirm(msg);
 	};
-	
+	// initialize with jQuery
 	$('body').on('click.abtNotice', '[data-notice]', function (e) {
 		if ( !ABT.notice($(this).data('notice')) ) return false;
 	});
@@ -17,7 +17,8 @@ var ABT = {};
 
 (function ($) {
 		
-	// calculate estimated number of days needed to run an experiment (tools page)
+	// calculate estimated number of days needed to run an experiment (on tools page)
+	// http://www.fourmilab.ch/rpkp/experiments/analysis/zCalc.html
 	var poz = function (z) {
 		var z_max = 6;
 		var x, y, w;
@@ -54,8 +55,9 @@ var ABT = {};
 	    return z > 0 ? ( (x + 1) * 0.5 ) : ( (1 - x) * 0.5 );
 	}
 
+	// http://www.fourmilab.ch/rpkp/experiments/analysis/zCalc.html
 	var p_to_z = function (p) {
-		var Z_EPSILON = 0.000001;     /* Accuracy of z approximation */
+		var Z_EPSILON = 0.000001;
 	    var minz = -6,
 			maxz = 6,
 			zval = 0,
@@ -76,16 +78,20 @@ var ABT = {};
 	    return zval;
 	}
 
+	// calc number of days to confidence
+	// params: 	expected conversion rate, desired observed effect, num of variations,
+	// 			confidence interval, anticipated views/day
 	var daysToConfidence = function (opts) {
 		var numer, denom, days;
 		opts.convRate = opts.convRate / 100;	
 		opts.effect = opts.effect / 100;	
-		numer = 2 * opts.vars * Math.pow(( p_to_z(opts.conf + (1 - opts.conf)/2) + p_to_z(opts.conf) ), 2) * (1 - opts.convRate);
+		numer = 2 * opts.vars * Math.pow(( p_to_z(opts.conf + (1 - opts.conf)/2) + 
+			p_to_z(opts.conf) ), 2) * (1 - opts.convRate);
 		denom = Math.pow(opts.effect, 2) * opts.views * opts.convRate;
 		days = numer / denom;
 		return Math.round(days);
 	}
-	
+	// hook into jQuery to calculate on form change or submit
 	$('body').on('change submit', '#days-to-confidence', function (e) {
 		e.preventDefault();
 		var form = $(this);
@@ -99,7 +105,7 @@ var ABT = {};
 		return false;
 	});
 	
-	// calculate with defaults and fill in the result field
+	// on load, calculate with defaults and fill in the result field
 	$('#days-to-confidence').trigger('change');
 	
 })(jQuery);

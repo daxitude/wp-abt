@@ -2,23 +2,32 @@
 /*
 Plugin Name: AB Testing
 Description: A/B test your WordPress Pages
-Version: 0.1
+Version: 0.2
 Author: daxitude
-Author URI: 
-Plugin URI: 
-Text Domain: ab-testing
-Domain Path: /lang
 */
 
+// define path constants
+define( 'ABT_BASE_DIR', dirname( __FILE__ ) . '/' );
+define( 'ABT_ADMIN_DIR', dirname( __FILE__ ) . '/admin/' );
 
-$abt_base = dirname( __FILE__ ) . '/';
+require_once ABT_BASE_DIR . 'db.php';
+require_once ABT_ADMIN_DIR . 'abt_manager.php';
+require_once ABT_ADMIN_DIR . 'helpers.php';
 
-require_once $abt_base . 'db.php';
+// init the db. checks for changes in schema by plugin version.
+// uses wp's dbDelta for simple update/add migrations
+ABT_DB::init();
+
+// register an autoloader. automatically requires files matching a class
+// when the class is first used. files must start from the plugin's admin base path
+// underscores in class names correspond to folder changes.
+// eg ABT_Model_Base = ab-testing/admin/Model/Base (case sensitive)
+spl_autoload_register(array('ABT_Admin_Mgr', 'autoloader'));
 
 if (is_admin())
-	require_once $abt_base . 'admin.php';
+	require_once ABT_BASE_DIR . 'admin.php';
 	
 if (!is_admin())
-	require_once $abt_base . 'public.php';
+	require_once ABT_BASE_DIR . 'public.php';
 
 

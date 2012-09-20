@@ -1,3 +1,6 @@
+/*
+ *	Additional form styling
+ */
 .input-error label{
 	color: red;
 }
@@ -7,7 +10,6 @@
 	color: red;
 	border-color: red;
 }
-
 .append {
 	line-height: 14px;
 	padding: 4px 5px;
@@ -41,9 +43,18 @@
 	width: 23em;
 }
 .postbox .hndle {
-	cursor: initial;
+	cursor: initial; /*not draggable on our screens*/
 }
-
+.error-banner {
+	border: 1px solid red;
+	padding: 5px 10px;
+	border-radius: 3px;
+	background: #F3F3F3;
+	color: #C00;
+}
+/*
+ *	Labels and Badges 
+ */
 .label {
 	display: inline;
 	padding: 2px 4px;

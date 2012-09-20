@@ -1,19 +1,21 @@
 <?php
-
-if ( !class_exists( 'ABT_DB_Model' ) )
-	require dirname(__FILE__) . '/db_model.php';
-
 /*
-id bigint(20) unsigned NOT NULL auto_increment,
-experiment_name varchar(255) NOT NULL default '',
-start_date datetime NOT NULL,
-end_date datetime NOT NULL,
-status varchar(20) NOT NULL default 'inactive',			
-goal_page_id bigint(20) unsigned NOT NULL default '0',
-goal_name varchar(255) NOT NULL default '',
-PRIMARY KEY (id)
+ * Experiment model
+ *
+	Table def
+	==========
+	id bigint(20) unsigned NOT NULL auto_increment,
+	experiment_name varchar(255) NOT NULL default '',
+	start_date datetime NULL default NULL,
+	end_date datetime NULL default NULL,
+	status tinyint(11) NOT NULL default '0',			
+	confidence decimal(2,2) NOT NULL default '0.8',			
+	effect tinyint(11) NOT NULL default '10',			
+	goal_page_id bigint(20) unsigned NOT NULL default '0',
+	goal_name varchar(255) NOT NULL default '',
+	PRIMARY KEY  (id)
 */
-class Experiment extends ABT_DB_Model {
+class ABT_Model_Experiment extends ABT_Model_Base {
 	
 	// instance attributes that are stored in db
 	public $id;
@@ -35,6 +37,7 @@ class Experiment extends ABT_DB_Model {
 	// table name in db
 	protected static $table_name = 'experiments';
 	
+	// get model's table name
 	public static function get_db_table() {
 		$name = self::$table_name;
 		return self::get_db_tables()->$name;
@@ -59,13 +62,6 @@ class Experiment extends ABT_DB_Model {
 		$db->delete( self::get_db_table(), array( 'id' => $id ), array( '%d' ) );
 	}
 	
-	function start() {
-		$this->start_date = date("Y-m-d H:m:s");
-	}
-	
-	function stop() {
-		$this->end_date = date("Y-m-d H:m:s");
-	}
 	
 	/*
 	 * static methods for fetching from database
@@ -139,9 +135,10 @@ class Experiment extends ABT_DB_Model {
 	}
 	
 	/*
-	 * helper methods for working with an instance
+	 * helper methods for working with an instance and rendering a view
 	 */
 	
+	// permalink to the goal page
 	public function goal_page_link() {
 		return get_permalink($this->goal_page_id);
 	}
@@ -170,16 +167,19 @@ class Experiment extends ABT_DB_Model {
 		return $text;
 	}
 	
+	// bool, true if is status == ready and has at least 2 variations
 	public function can_start() {
 		return $this->is_ready() && $this->num_variations() > 1;
 	}
 	
+	// bool, true if running
 	public function can_stop() {
 		return $this->is_running();
 	}
 	
-	// check how many variations exist in the experiment we use this to check
-	// if result = 0 and set the first saved variation as the Base variation
+	// check how many variations exist in the experiment. used this to check
+	// if result = 0 and set the first saved variation as the Base variation. also 
+	// used to verify variation count for status transitions
 	public function num_variations() {
 		$db = self::get_db();
 		$tables = self::get_db_tables();		
@@ -199,14 +199,15 @@ class Experiment extends ABT_DB_Model {
 	public function is_running() {
 		return (int) $this->status == self::RUNNING;
 	}
-	// stupid php bug strtotime not returning false for '0000..' mysql null val
+	
+	// formatters for dates. @oof for putting in model, but with logiclessness
+	// of Mustache templates, this seems to be the fastest and easiest way
 	public function format_date($date) {
+		// silly php bug strtotime not returning false for '0000..' mysql null val
 		$date = strtotime($date);
 		return $date > 0 ? date('D, M d g:h a', $date) : '--';
 	}
 	
-	// formatters for dates. normally wouldn't put in model, but with logiclessness
-	// of Mustache templates, this seems to be the fastest and easiest way
 	public function start_date_f() {
 		return $this->format_date($this->start_date);
 	}
@@ -214,7 +215,8 @@ class Experiment extends ABT_DB_Model {
 	public function end_date_f() {
 		return $this->format_date($this->end_date);
 	}
-	
+
+	// calculate total experiment visits as a sum of all variations' visits
 	public function total_visits() {
 		if (isset($this->total_visits)) return $this->total_visits;
 		$db = self::get_db();
@@ -230,6 +232,7 @@ class Experiment extends ABT_DB_Model {
 		return $exp->total_visits;
 	}
 	
+	// calculate total experiment conversions as a sum of all variations' conversions
 	public function total_conversions() {
 		if (isset($this->total_conversions)) return $this->total_conversions;
 		$db = self::get_db();
@@ -245,6 +248,7 @@ class Experiment extends ABT_DB_Model {
 		return $exp->total_conversions;
 	}
 	
+	// calculate number of days an experiment has been running
 	public function days_running() {
 		switch ($this->status) {
 			case '0':
@@ -260,6 +264,8 @@ class Experiment extends ABT_DB_Model {
 		return $days;
 	}
 	
+	// calculate number of days to specified confidence interval
+	// http://blog.marketo.com/blog/2007/10/landing-page-1.html
 	public function days_to_confidence() {
 		if ( $this->days_running() < 4 || $this->total_visits() < 10 || $this->total_conversions() < 2 ) return false;
 		$num_vars = $this->num_variations();
@@ -273,6 +279,8 @@ class Experiment extends ABT_DB_Model {
 		return round($days);
 	}
 	
+	// private, convert a p-value to a z-score with a std normal distribution
+	// http://www.fourmilab.ch/rpkp/experiments/analysis/zCalc.html
 	private function p_to_z($p) {
 		$Z_EPSILON = 0.000001;     /* Accuracy of z approximation */
 	    $minz = -6;
@@ -295,7 +303,7 @@ class Experiment extends ABT_DB_Model {
 	    return $zval;
 	}
 
-	// 
+	// http://www.fourmilab.ch/rpkp/experiments/analysis/zCalc.html
 	private function poz($z) {
 		$z_max = 6;
 		
@@ -332,7 +340,8 @@ class Experiment extends ABT_DB_Model {
 	}
 	
 	/*
-	 * these 4 methods wont' work < php 5.3 so going to reluctantly repeat them in sub classes
+	 * these 4 methods wont' work < php 5.3 (no static:: or get_called_class())
+	 * so going to reluctantly repeat them in sub classes for now
 	 */
 	
 	public static function first($where = null) {

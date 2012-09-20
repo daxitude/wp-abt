@@ -1,6 +1,4 @@
-/*  Copyright 2012 daxitude@gmail.com
-
-    This program is free software; you can redistribute it and/or modify
+/*  This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License, version 2, as 
     published by the Free Software Foundation.
 
@@ -29,6 +27,8 @@ Easy A/B testing for your WordPress Pages.
 
 This plugin allows you to easily A/B test content on your WordPress Pages (support for other post types may be on the way). Create an experiment, define a goal, add variations, hit the start button!
 
+This plugin is still under development. However, you are, of course, free to use and modify it as you please.
+
 == Installation ==
 
 See [Installing Plugins](http://codex.wordpress.org/Managing_Plugins#Installing_Plugins).
@@ -45,14 +45,15 @@ tbd
 
 === TODO ===
 
-* wp_nonce
-* unit testing
-* testing on varied WP installs
+* unit testing (not exactly tdd here :/)
 * documentation
 * verify dependencies, PHP and WP
+* additional test types eg theme, css, js, multivariate
+* trying this algo for serving variations?: http://stevehanov.ca/blog/index.php?id=132
 * validation - enforce uniqueness on variation.post_id
 * "test mode" - run without cookies so that visits/conversions can be simulated
 * maybe don't use as many rows in wp_options ?
-* hook into post deletion actions
-* expand test to other post types
+* hook into post deletion actions to deal with issue when a variation or goal page is deleted
+* expand experiments to other post types
 * send data to Google Analytics and/or other services?
+* reduce the number of extra trips to the database when a visitor requests a Page. Some ideas: autoload an array of variation/conversion page ids or cache on first request, make writes for visits/conversions non-blocking (async?)

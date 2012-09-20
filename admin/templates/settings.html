@@ -1,7 +1,7 @@
 <div class="wrap">
 	<div id="icon-options-general" class="icon32"><br></div>
 	<h2>A/B Tests - Settings</h2>
-	
+	{{> _error_banner}}
 	<h3>IP Filtering</h3>
 	<form method="post" action>
 		<p><label for="blocked_ip">Enter IP addresses that you want to filter out of experiment visits and conversions.<br>Please enter one IP address per line.</label></p>
@@ -16,6 +16,7 @@
 		</p>
 		
 		<input type="hidden" name="action" value="update">
+		<input type="hidden" name="_nonce" value="{{_nonce}}">
 		<input type="submit" value="Submit" class="button-primary">
 	</form>
 </div>

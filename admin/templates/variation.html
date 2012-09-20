@@ -3,15 +3,16 @@
 	<h2>
 		A/B Tests Variation{{^isNew}} - {{/isNew}}{{var.variation_name}}
 	</h2>
+	{{> _error_banner}}
 	<form method="post" action="">
 	<table class="form-table">
 		<tbody>
-			<tr valign="top" class="{{#errors.variation_name}}input-error{{/errors.variation_name}}">
+			<tr valign="top" class="{{#flash.errors.variation_name}}input-error{{/flash.errors.variation_name}}">
 				<th scope="row"><label for="variation[variation_name]">Variation Name</label></th>
 				<td><input name="variation[variation_name]" type="text" id="variation_name" value="{{var.variation_name}}" class="regular-text appended"><span class="append reqd">&#x02605;</span></td>
 			</tr>
 						
-			<tr valign="top" class="{{#errors.post_id}}input-error{{/errors.post_id}}">
+			<tr valign="top" class="{{#flash.errors.post_id}}input-error{{/flash.errors.post_id}}">
 				<th scope="row"><label for="variation[post_id]">Goal Page</label></th>
 				<td>
 					{{#isNew}}{{#pages}}{{var.post_id}}{{/pages}}{{/isNew}}
@@ -29,6 +30,7 @@
 	<br>
 	
 	<input type="hidden" name="action" value="{{action}}">
+	<input type="hidden" name="_nonce" value="{{_nonce}}">
 	<input type="hidden" name="variation[id]" value="{{var.id}}">
 	<input type="hidden" name="variation[experiment_id]" value="{{var.experiment_id}}">
 	<input type="submit" class="button-primary" value="Save" tabindex="5" accesskey="p">
