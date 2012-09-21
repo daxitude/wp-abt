@@ -264,7 +264,7 @@ class ABT_Model_Experiment extends ABT_Model_Base {
 		return $days;
 	}
 	
-	// calculate number of days to specified confidence interval
+	// calculate number of days to specified confidence level
 	// http://blog.marketo.com/blog/2007/10/landing-page-1.html
 	public function days_to_confidence() {
 		if ( $this->days_running() < 4 || $this->total_visits() < 10 || $this->total_conversions() < 2 ) return false;

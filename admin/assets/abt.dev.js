@@ -80,7 +80,7 @@ var ABT = {};
 
 	// calc number of days to confidence
 	// params: 	expected conversion rate, desired observed effect, num of variations,
-	// 			confidence interval, anticipated views/day
+	// 			confidence level, anticipated views/day
 	var daysToConfidence = function (opts) {
 		var numer, denom, days;
 		opts.convRate = opts.convRate / 100;	

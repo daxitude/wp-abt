@@ -6,7 +6,7 @@
 	
 	<h3 class="title">Estimate Experiment Duration</h3>
 	<p>
-		Get an estimate of how many days it will take for an experiment to reach your desired confidence interval!
+		Get an estimate of how many days it will take for an experiment to reach your desired confidence level.
 	</p>
 	
 	<form id="days-to-confidence" method="post" action="">
@@ -14,10 +14,11 @@
 		<tbody>
 			<tr valign="top">
 				<th scope="row">
-					<label for="conf">Confidence Interval</label>
+					<label for="conf">Confidence Level</label>
 				</th>
 				<td>
 					<input name="conf" type="text" value=".9" size="4">
+					<span class="description">e.g., 0.9 => 90% confidence that the results are true.</span>
 				</td>
 			</tr>
 			
@@ -27,6 +28,7 @@
 				</th>
 				<td>
 					<input name="convRate" type="text" value="10" size="4">
+					<span class="description"> This could be the baseline rate from your current page.</span>
 				</td>
 			</tr>
 			
@@ -36,6 +38,7 @@
 				</th>
 				<td>
 					<input name="effect" type="text" value="30" size="4">
+					<span class="description"> Also known as sensitivity: the amount of difference (+/-) that you'd like to detect.</span>
 				</td>
 			</tr>
 			
@@ -45,6 +48,7 @@
 				</th>
 				<td>
 					<input name="views" type="text" value="50" size="4">
+					<span class="description">Total views per day.</span>
 				</td>
 			</tr>
 			
@@ -54,6 +58,7 @@
 				</th>
 				<td>
 					<input name="vars" type="text" value="2" size="4">
+					<span class="description">Number of page variations you'd like to test.</span>
 				</td>
 			</tr>
 				  
@@ -63,7 +68,7 @@
 	<br>
 	
 	<p>
-		Number of days needed in Experiment: &nbsp; <strong id="numDays" class="label info"></strong>
+		Estimated Number of days needed in Experiment: &nbsp; <strong id="numDays" class="label info"></strong>
 	</p>
 	
 	<br>

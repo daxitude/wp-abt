@@ -30,7 +30,7 @@ class ABT_View_Experiments extends ABT_View_Base {
 		
 		echo ABT_Mustache::render('list',
 			array(
-				'_nonce' => $this->generate_nonce('abt_experiment_modify'),
+				'_nonce' => $this->generate_nonce(),
 				'flash' => $this->flash->get(),
 				'exps' => $exps,
 				'count_total' => ABT_Model_Experiment::count(),
