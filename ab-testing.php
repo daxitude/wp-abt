@@ -14,8 +14,8 @@ require_once ABT_BASE_DIR . 'db.php';
 require_once ABT_ADMIN_DIR . 'abt_manager.php';
 require_once ABT_ADMIN_DIR . 'helpers.php';
 
-// init the db. checks for changes in schema by plugin version.
-// uses wp's dbDelta for simple update/add migrations
+// init the db class. checks for changes in schema by plugin version.
+// uses wp's dbDelta for simple update/add migrations if necessary
 ABT_DB::init();
 
 // register an autoloader. automatically requires files matching a class

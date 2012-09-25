@@ -19,6 +19,7 @@ class ABT_Admin_Mgr {
 	function run() {
 		$this->pages_init();
 		add_action('admin_menu', array($this, 'admin_menu'));
+		add_filter('add_menu_classes', array($this, 'filter_admin_menu'));
 		if (! $this->req_page ) return false;
 
 		$page_class = $this->get_page();
@@ -27,6 +28,20 @@ class ABT_Admin_Mgr {
 		$page_class->init();
 		$page_class->route($this->request);
 		$this->flash->save();
+	}
+	
+	function filter_admin_menu($menu) {
+		$abt = array_filter($menu, create_function('$item', 'return $item[2] == "abt_list";'));
+		
+		foreach( $menu as $key => $options ) {
+			if ($options[0] == 'A/B Tests') {
+				// menu-top toplevel_page_abt_list menu-top-first menu-top-last
+				$menu[$key][4] .= ' abt-current-submenu';
+				break;
+			}
+		}
+				
+		return $menu;
 	}
 	
 	function admin_menu() {

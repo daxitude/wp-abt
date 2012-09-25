@@ -100,6 +100,7 @@
 
 	<div class="clear"></div>
 	{{^isNew}}
+	<div class="variations-table">
 	<table class="wp-list-table widefat fixed users" cellspacing="0">
 		<thead>
 			<tr>
@@ -109,7 +110,10 @@
 				<th scope="col" id="" class="manage-column column-posts" style="">Visits</th>
 				<th scope="col" id="" class="manage-column column-posts" style="">Conversions</th>
 				<th scope="col" id="" class="manage-column column-posts" style="">Conversion Rate</th>
-				<th scope="col" id="" class="manage-column column-posts" style="">Confidence</th>
+				<th scope="col" id="" class="manage-column column-posts handle-column" style="">
+					Confidence
+					<div class="handlediv" title="Click to toggle"><br></div>
+				</th>
 			</tr>
 		</thead>
 		<tbody id="variations-list" class="list">
@@ -120,6 +124,7 @@
 	{{^isNew}}
 		</tbody>
 	</table>
+	</div>
 	{{/isNew}}
 	<br>
 	<input type="hidden" name="action" value="{{action}}">

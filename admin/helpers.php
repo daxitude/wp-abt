@@ -5,9 +5,10 @@
 // parses the requested page, eg abt_list, so the plugin can render the appropriate page
 
 // redirect to a specified url. if headers already sent, will do a meta refresh
-function abt_redirect_to($url) {
+// using this instead of wp_redirect so we can include the exit within the method
+function abt_redirect_to( $url, $status = 302) {
 	if( !headers_sent() ) {
-		header('location: ' . urldecode($url));
+		header('location: ' . wp_sanitize_redirect($url), true, $status);
 		exit;
 	}
 

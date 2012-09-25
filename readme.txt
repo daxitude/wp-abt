@@ -58,3 +58,4 @@ tbd
 * send data to Google Analytics and/or other services?
 * reduce the number of extra trips to the database when a visitor requests a Page. Some ideas: autoload an array of variation/conversion page ids or cache on first request, make writes for visits/conversions non-blocking (async?)
 * filter traffic from bots??
+* store visits/conversions individually so time trends can be observed

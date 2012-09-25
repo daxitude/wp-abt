@@ -42,19 +42,24 @@ class ABT_View_Experiment extends ABT_View_Base {
 				'_nonce' => $this->generate_nonce(),
 				'flash' => $this->flash->get(),
 				'isNew' => $req->id ? false : true,
-				'pages' => array(__class__, 'list_pages'),
+				'pages' => array(&$this, 'list_pages'),
 				'status_html' => create_function('$txt', 'return ABT_Experiment_Page::status_html($txt);')
 			)
 		);
 	}
 	// renders a dropdown <select> of wp pages for choosing a goal page
-	static function list_pages($id = null) {
-		$list =  wp_dropdown_pages(
+	function list_pages($id = null) {
+		$post_type = 'page';//$this->$goal_post_type;
+		$pt_object = get_post_type_object($post_type);
+		$option_label = $pt_object->labels->singular_name;
+		
+		$list =  $this->dropdown_posts(
 			array(
+				'post_type' => $post_type,
 				'selected' => $id,
 				'echo' => false,
 				'name' => 'experiment[goal_page_id]',
-				'show_option_none' => 'Select Page'
+				'show_option_none' => 'Select ' . $option_label
 			)
 		);
 		return $list;

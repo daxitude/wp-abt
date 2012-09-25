@@ -20,7 +20,7 @@ class ABT_View_Settings extends ABT_View_Base {
 			'publish_pages',
 			$this->get_page_name(),
 			array($this, 'get')
-		);
+		);		
 	}
 	
 	static function get_page_name() {

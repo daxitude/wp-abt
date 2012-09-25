@@ -67,9 +67,9 @@ abstract class ABT_Model_Base {
 		$db = $this->get_db();
 		$this->set_attributes($new_values);
 		$data = $this->get_attributes();
-		if ( !$this->validate() ) return false;
+		if ( !$this->validate() ) return false;		
 		$where = array('id' => $this->id);
-		$db->update( $this->get_db_table(), $data, $where );
+		$update = $db->update( $this->get_db_table(), $data, $where, null, array('%d') );
 		$this->_errors = null;
 		return $this;
 	}
@@ -142,7 +142,7 @@ abstract class ABT_Model_Base {
 	 * attribute helper methods
 	 */
 	
-	// return an array of null/not null declared model attributes
+	// return an array of null/not null declared public model attributes
 	// @public - only returns public attributes
 	public function get_properties($null_values = false) {
 		$get_fields = create_function('$obj', 'return get_object_vars($obj);');

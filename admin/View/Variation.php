@@ -47,9 +47,15 @@ class ABT_View_Variation extends ABT_View_Base {
 	// @param $id the current id to set as selected=selected, but darn thing ain't workin
 	// excludes post_ids already having a variation
 	function list_pages($id = null) {
+		$post_type = 'page';//$this->$goal_post_type;
+		$pt_object = get_post_type_object($post_type);
+		$option_label = $pt_object->labels->singular_name;
+		
 		$post_ids = ABT_Model_Variation::get_post_ids();
-		$list =  wp_dropdown_pages(
+		
+		$list =  $this->dropdown_posts(
 			array(
+				'post_type' => $post_type,
 				'selected' => $id,
 				'echo' => false,
 				'name' => 'variation[post_id]',
@@ -87,16 +93,16 @@ class ABT_View_Variation extends ABT_View_Base {
 	
 	function delete($request) {
 		$var = ABT_Model_Variation::find_by_id($request->variation['id']);
-		
+		// everything is being saved as a string :/
+		ABT_Model_Variation::delete($var->id);
 		if (
-			$var->base &&
-			ABT_Model_Variation::count( array('experiment_id' => $var->experiment_id) ) > 1
+			$var->base == '1' &&
+			ABT_Model_Variation::count( array('experiment_id' => $var->experiment_id) ) > 0
 		) {
 			$new_base = ABT_Model_Variation::first( array('experiment_id' => $var->experiment_id) );
 			$new_base->update( array('base' => 1) );
 		}
 	
-		ABT_Model_Variation::delete($var->id);
 		abt_redirect_to('?page=abt_experiment&id=' . $request->variation['experiment_id']);
 	}
 

@@ -90,6 +90,49 @@ abstract class ABT_View_Base {
 			$_SESSION['errors']['notice'] = null;
 		}
 	}
+	
+	// modifies wp_dropdown pages to allow use of other post types
+	function dropdown_posts( $args = '' ) {
+		$defaults = array(
+			'depth' => 0,
+			'child_of' => 0,
+			'selected' => 0,
+			'echo' => 1,
+			'post_type' => 'page',
+			'numberposts' => '-1',
+			'name' => 'page_id',
+			'id' => '',
+			'show_option_none' => '',
+			'show_option_no_change' => '',
+			'option_none_value' => ''
+		);
+
+		$r = wp_parse_args( $args, $defaults );
+		extract( $r, EXTR_SKIP );
+
+		$pages = get_posts(array('post_type' => $r['post_type'], 'numberposts' => -1));
+		$output = '';
+		// Back-compat with old system where both id and name were based on $name argument
+		if ( empty($id) )
+			$id = $name;
+
+		if ( ! empty($pages) ) {
+			$output = "<select name='" . esc_attr( $name ) . "' id='" . esc_attr( $id ) . "'>\n";
+			if ( $show_option_no_change )
+				$output .= "\t<option value=\"-1\">$show_option_no_change</option>";
+			if ( $show_option_none )
+				$output .= "\t<option value=\"" . esc_attr($option_none_value) . "\">$show_option_none</option>\n";
+			$output .= walk_page_dropdown_tree($pages, $depth, $r);
+			$output .= "</select>\n";
+		}
+
+		$output = apply_filters('wp_dropdown_pages', $output);
+
+		if ( $echo )
+			echo $output;
+
+		return $output;
+	}
 		
 }
 

@@ -18,7 +18,7 @@ class ABT_View_Experiments extends ABT_View_Base {
 			$this->get_page_name(),
 			array($this, 'get'),
 			'',
-			'99'
+			'111'
 		);
 	}
 	// render the html for the list view. if there are $_GET params
@@ -28,7 +28,7 @@ class ABT_View_Experiments extends ABT_View_Base {
 			ABT_Model_Experiment::where($this->request->experiment) :
 			ABT_Model_Experiment::all();
 		
-		echo ABT_Mustache::render('list',
+		echo ABT_Mustache::render('experiments',
 			array(
 				'_nonce' => $this->generate_nonce(),
 				'flash' => $this->flash->get(),

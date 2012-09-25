@@ -13,6 +13,12 @@ var ABT = {};
 		if ( !ABT.notice($(this).data('notice')) ) return false;
 	});
 	
+	// replicate the postbox toggle for the variations table. easier to do it this way vs.
+	// trying to mirror the class structure of the default postbox for the table
+	$('.variations-table .handlediv').on('click', function () {
+		$(this).parents('thead').siblings('tbody').toggleClass('hide');
+	})
+	
 })(jQuery);
 
 (function ($) {
