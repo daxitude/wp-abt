@@ -101,29 +101,28 @@
 	<div class="clear"></div>
 	{{^isNew}}
 	<div class="variations-table">
-	<table class="wp-list-table widefat fixed users" cellspacing="0">
-		<thead>
-			<tr>
-				<th scope="col" id="cb" class="manage-column column-cb check-column"><input type="checkbox"></th>
-				<th scope="col" id="" class="manage-column column-posts" style="">Variation Name</th>
-				<th scope="col" id="" class="manage-column column-posts" style="">Page</th>
-				<th scope="col" id="" class="manage-column column-posts" style="">Visits</th>
-				<th scope="col" id="" class="manage-column column-posts" style="">Conversions</th>
-				<th scope="col" id="" class="manage-column column-posts" style="">Conversion Rate</th>
-				<th scope="col" id="" class="manage-column column-posts handle-column" style="">
-					Confidence
-					<div class="handlediv" title="Click to toggle"><br></div>
-				</th>
-			</tr>
-		</thead>
-		<tbody id="variations-list" class="list">
-	{{/isNew}}
-			{{#vars}}
-				{{> _variation}}
-			{{/vars}}
-	{{^isNew}}
-		</tbody>
-	</table>
+		<table class="wp-list-table widefat fixed users" cellspacing="0">
+			<thead>
+				<tr>
+					<th scope="col" id="" class="manage-column column-first">Variation Name</th>
+					<th scope="col" id="" class="manage-column">Page</th>
+					<th scope="col" id="" class="manage-column">Visits</th>
+					<th scope="col" id="" class="manage-column">Conversions</th>
+					<th scope="col" id="" class="manage-column">Conversion Rate</th>
+					<th scope="col" id="" class="manage-column handle-column">
+						Confidence
+						<div class="handlediv" title="Click to toggle"><br></div>
+					</th>
+				</tr>
+			</thead>
+			<tbody id="variations-list" class="list">
+		{{/isNew}}
+				{{#vars}}
+					{{> _variation}}
+				{{/vars}}
+		{{^isNew}}
+			</tbody>
+		</table>
 	</div>
 	{{/isNew}}
 	<br>

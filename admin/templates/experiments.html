@@ -14,22 +14,20 @@
 		
 		<thead>
 		<tr>
-			<th scope="col" id="cb" class="manage-column column-cb check-column"><input type="checkbox"></th>
-			<th scope="col" id="" class="manage-column column-posts" style="">Name</th>
-			<th scope="col" id="" class="manage-column column-posts" style="">Status</th>
-			<th scope="col" id="" class="manage-column column-posts" style="">Visits</th>
-			<th scope="col" id="" class="manage-column column-posts" style="">Conversions</th>
-			<th scope="col" id="" class="manage-column column-posts" style="">Goal</th>
-			<th scope="col" id="" class="manage-column column-posts" style="">Start</th>
-			<th scope="col" id="" class="manage-column column-posts" style="">End</th>
+			<th scope="col" id="" class="manage-column column-first">Name</th>
+			<th scope="col" id="" class="manage-column">Status</th>
+			<th scope="col" id="" class="manage-column">Visits</th>
+			<th scope="col" id="" class="manage-column">Conversions</th>
+			<th scope="col" id="" class="manage-column">Goal</th>
+			<th scope="col" id="" class="manage-column">Start</th>
+			<th scope="col" id="" class="manage-column">End</th>
 		</tr>
 		</thead>
 		
 		<tbody id="the-list" class="list">
 			{{#exps}}
 			<tr class="alternate">
-				<th scope="row" class="check-column"><input type="checkbox" name="post[]" value="{{id}}"></th>
-				<td class="post-title page-title column-title">
+				<td class="column-title column-first">
 					<a href="?page=abt_experiment&amp;id={{id}}" title="">{{experiment_name}}</a>
 					<div class="row-actions">
 						<span class="edit"><a href="?page=abt_experiment&amp;id={{id}}">Edit</a> | </span>
