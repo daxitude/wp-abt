@@ -132,14 +132,14 @@ class ABT_Model_Variation extends ABT_Model_Base {
 	
 	// calc conversion rate
 	public function rate() {
-		return ($this->visits > 0) ? round($this->conversions / $this->visits, 4) * 100 . '%' : '0';
+		return ($this->visits > 0) ? round($this->conversions / $this->visits, 4) * 100 .'%' : 0;
 	}
 	
 	public function compare_to_base() {
 		if ($this->base) return '--';
 		$base = $this->get_base_variation($this->experiment_id);
 		$base_cr = $base->rate();
-		return round(( $this->rate() - $base_cr ) / $base_cr, 2) * 100 . '%';
+		return ($base_cr > 0) ? round(( $this->rate() - $base_cr ) / $base_cr, 2) * 100 . '%' : '0.0%';
 	}
 	
 	// get the page's permalink

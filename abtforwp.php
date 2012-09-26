@@ -23,7 +23,7 @@ ABT_DB::init();
 // register an autoloader. automatically requires files matching a class
 // when the class is first used. files must start from the plugin's admin base path
 // underscores in class names correspond to folder changes.
-// eg ABT_Model_Base = ab-testing/admin/Model/Base (case sensitive)
+// eg ABT_Model_Base = abtforwp/admin/Model/Base (case sensitive)
 spl_autoload_register(array('ABT_Admin_Mgr', 'autoloader'));
 
 if (is_admin())
