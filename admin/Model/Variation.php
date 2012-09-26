@@ -135,6 +135,13 @@ class ABT_Model_Variation extends ABT_Model_Base {
 		return ($this->visits > 0) ? round($this->conversions / $this->visits, 4) * 100 . '%' : '0';
 	}
 	
+	public function compare_to_base() {
+		if ($this->base) return '--';
+		$base = $this->get_base_variation($this->experiment_id);
+		$base_cr = $base->rate();
+		return round(( $this->rate() - $base_cr ) / $base_cr, 2) * 100 . '%';
+	}
+	
 	// get the page's permalink
 	public function get_page_link() {
 		return get_permalink($this->post_id);
@@ -197,7 +204,7 @@ class ABT_Model_Variation extends ABT_Model_Base {
 		$var_std_err = SQRT( $base_conv_rate * (1 - $base_conv_rate) / $base->visits + $var_conv_rate * (1 - $var_conv_rate) / $this->visits ); 
 		$var_z_score = ($base_conv_rate - $var_conv_rate) / $var_std_err;
 		$p_value = $this->norm_dist($var_z_score);
-		return round($p_value, 3) * 100;
+		return round($p_value, 3) * 100 . '%';
 	}
 	
 	

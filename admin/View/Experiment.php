@@ -6,12 +6,13 @@ class ABT_View_Experiment extends ABT_View_Base {
 	
 	// page name eg /?page=$page_name. also added to hashing for the nonce
 	protected static $page_name = 'abt_experiment';
+	protected $help_menu = true;
 	
 	// register the page but don't show it on the admin bar
 	// this is kinda bootsy cuz the 'current' state doesn't render on the 
 	// admin bar link when you're on this page. could have used ?page=abt&action=show..
 	public function admin_menu () {
-		add_submenu_page(
+		$this->wp_page_name = add_submenu_page(
 			null,
 			'A/B Test Experiment',
 			'A/B Tests',
@@ -29,7 +30,7 @@ class ABT_View_Experiment extends ABT_View_Base {
 	function get() {
 		$req = (object) $this->request;
 		// find the requested experiment and variations
-		$this->exp = $req->id ? ABT_Model_Experiment::by_id($req->id) : false;
+		$this->exp = $req->id ? ABT_Model_Experiment::by_id($req->id) : new ABT_Model_Experiment();
 		$vars = $req->id ? ABT_Model_Variation::by_experiment_id($req->id) : false;
 		$action = $req->id ? 'update' : 'create';
 

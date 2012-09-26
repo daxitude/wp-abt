@@ -11,7 +11,7 @@ class ABT_View_Variation extends ABT_View_Base {
 	// this is kinda bootsy cuz the 'current' state doesn't render on the 
 	// admin bar link when you're on this page. could have used ?page=abt&action=show..
 	public function admin_menu () {
-		add_submenu_page(
+		$this->wp_page_name = add_submenu_page(
 			null,
 			'A/B Test Variation',
 			'A/B Tests',
@@ -28,7 +28,7 @@ class ABT_View_Variation extends ABT_View_Base {
 	// render html for the view
 	function get() {
 		$req = (object) $this->request;
-		$this->var = $req->id ? ABT_Model_Variation::by_id($req->id) : false;
+		$this->var = $req->id ? ABT_Model_Variation::by_id($req->id) : new ABT_Model_Variation();
 		$this->var->experiment_id = $req->experiment_id;
 		$action = $req->id ? 'update' : 'create';
 

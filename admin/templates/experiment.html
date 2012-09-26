@@ -19,7 +19,7 @@
 								<tr valign="top" class="{{#flash.errors.experiment_name}}input-error{{/flash.errors.experiment_name}}">
 									<th scope="row"><label for="experiment[experiment_name]">Experiment Name</label></th>
 									<td>
-										<input name="experiment[experiment_name]" type="text" id="experiment_name" value="{{exp.experiment_name}}" class="regular-text appended"><span class="append reqd">&#x02605;</span>
+										<input name="experiment[experiment_name]" type="text" id="experiment_name" value="{{exp.experiment_name}}" class="regular-text appended" placeholder="Any name you'd like!"><span class="append reqd">&#x02605;</span>
 									</td>
 								</tr>
 
@@ -51,7 +51,7 @@
 
 								<tr valign="top" class="{{#flash.errors.goal_name}}input-error{{/flash.errors.goal_name}}">
 									<th scope="row"><label for="experiment[goal_name]">Goal Name</label></th>
-									<td><input name="experiment[goal_name]" type="text" id="goal_name" class="regular-text appended" value="{{exp.goal_name}}"><span class="append reqd">&#x02605;</span></td>
+									<td><input name="experiment[goal_name]" type="text" id="goal_name" class="regular-text appended" value="{{exp.goal_name}}" placeholder="Any name you'd like!"><span class="append reqd">&#x02605;</span></td>
 								</tr>
 
 								<tr valign="top" class="{{#flash.errors.goal_page_id}}input-error{{/flash.errors.goal_page_id}}">
@@ -109,6 +109,7 @@
 					<th scope="col" id="" class="manage-column">Visits</th>
 					<th scope="col" id="" class="manage-column">Conversions</th>
 					<th scope="col" id="" class="manage-column">Conversion Rate</th>
+					<th scope="col" id="" class="manage-column">Compare to Base</th>
 					<th scope="col" id="" class="manage-column handle-column">
 						Confidence
 						<div class="handlediv" title="Click to toggle"><br></div>

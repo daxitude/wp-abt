@@ -23,9 +23,10 @@ class ABT_Admin_Mgr {
 		if (! $this->req_page ) return false;
 
 		$page_class = $this->get_page();
-				
+		// have to add this action to admin_init to make sure the page's wp_page_name attribute
+		// has been set on returned call to add_*_page
+		add_action('admin_init', array($page_class, 'init'));
 		$page_class->set_flash($this->flash);
-		$page_class->init();
 		$page_class->route($this->request);
 		$this->flash->save();
 	}

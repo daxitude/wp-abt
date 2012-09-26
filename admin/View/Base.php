@@ -9,8 +9,11 @@ abstract class ABT_View_Base {
 	
 	// page name eg /?page=$page_name. also added to hashing for the nonce
 	protected static $page_name;
-	
+	// the page's flash message object
 	protected $flash;
+	// set this to true when providing a WP contextual help menu
+	protected $help_menu = false;
+	protected $wp_page_name;
 	
 	function __construct() {}
 	
@@ -20,6 +23,7 @@ abstract class ABT_View_Base {
 		add_action('admin_print_scripts', array($this, 'add_js'));
 		// @todo why is admin_print_styles printing near the footer and not head?
 		add_action('admin_print_styles', array($this, 'add_css'));
+		add_action( "load-" . $this->wp_page_name, array( $this, 'contextual_help_tabs' ), 20 );
 	}
 	
 	// subclass will override this method to hook its page into the wp admin menu
@@ -36,6 +40,18 @@ abstract class ABT_View_Base {
 		wp_register_style( 'abt_css', plugins_url('', __file__) . '/../assets/abt.dev.css', '0.1' );
 		wp_enqueue_style( 'abt_css' );
 	}
+		
+	function contextual_help_tabs() {
+		if ( ! $this->help_menu ) return false;
+		$screen = get_current_screen();
+		$class = strtolower(array_pop(explode('_', get_class($this))));
+		$screen->add_help_tab( array( 
+			'id' => 'overview-help',
+			'title' => 'Overview',
+			'content' => ABT_Mustache::render($class . '_help', null)
+		) );
+	}
+	
 	// route a request to the appropriate method
 	// some delete requests are sent as a GET via a link with action=delete param
 	// this is how WP does it on other admin pages but it's not ideal

@@ -25,6 +25,8 @@
 	width: 2em;
 	box-sizing: border-box;
 	-moz-box-sizing: border-box;
+	position: relative;
+	z-index: 1;
 }
 .append.reqd {
 	font-family: 'apple symbols';
@@ -36,11 +38,13 @@
 	font-size: 12px;
 	height: 23px;
 }
-.appended {
+input.appended {
 	border-top-right-radius: 0;
 	border-bottom-right-radius: 0;
-	margin-right: -2px;
+	margin-right: -1px;
 	vertical-align: middle;
+	position: relative;
+	z-index: 10;
 }
 .regular-text.appended {
 	width: 23em;
@@ -108,6 +112,14 @@
 }
 .hide {
 	display: none;
+}
+hr {
+	display:block; 
+	height:1px; 
+	border:0; 
+	border-top:1px solid #ccc; 
+	margin:1em 0; 
+	padding:0; 
 }
 
 /*

@@ -21,7 +21,7 @@ Stable tag: trunk
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Easy A/B testing for your WordPress Pages.
+Increase conversions by running A/B content experiments right from your WordPress admin.
 
 == Description ==
 
@@ -47,7 +47,6 @@ tbd
 
 * unit testing (not exactly tdd here :/)
 * documentation
-* verify dependencies, PHP and WP
 * additional test types eg theme, css, js, multivariate
 * trying this algo for serving variations?: http://stevehanov.ca/blog/index.php?id=132
 * validation - enforce uniqueness on variation.post_id
@@ -59,3 +58,4 @@ tbd
 * reduce the number of extra trips to the database when a visitor requests a Page. Some ideas: autoload an array of variation/conversion page ids or cache on first request, make writes for visits/conversions non-blocking (async?)
 * filter traffic from bots??
 * store visits/conversions individually so time trends can be observed
+* pagination for the experiments page

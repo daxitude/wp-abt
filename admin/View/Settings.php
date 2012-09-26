@@ -8,12 +8,14 @@ class ABT_View_Settings extends ABT_View_Base {
 	public $filter_ip;
 	public $filter_ip_on;
 	
+	protected $help_menu = true;
+	
 	// page name eg /?page=$page_name. also added to hashing for the nonce
 	protected static $page_name = 'abt_settings';
 	
 	// register the settings page
 	public function admin_menu () {
-		add_submenu_page(
+		$this->wp_page_name = add_submenu_page(
 			'abt_list',
 			'A/B Test Settings',
 			'Settings',

@@ -7,11 +7,12 @@ class ABT_View_Experiments extends ABT_View_Base {
 	
 	// page name eg /?page=$page_name. also added to hashing for the nonce
 	protected static $page_name = 'abt_list';
+	protected $help_menu = true;
 	
 	// register the Main page that lists experiments
 	// also registers the Tools page
 	public function admin_menu () {
-		add_menu_page(
+		$this->wp_page_name = add_menu_page(
 			'A/B Tests',
 			'A/B Tests',
 			'publish_pages',

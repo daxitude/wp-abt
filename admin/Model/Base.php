@@ -15,13 +15,14 @@ abstract class ABT_Model_Base {
 	// stores validation errors. array keys by model attribute
 	// accessible by public method errors()
 	private $_errors = null;
+	private $_defaults = null;
 	
 	// when a model is instantiated an array of attributes can be passed.
-	// ALL attributes passed are set but only those that are declared will
-	// pass thru validation and be allowed to persist
-	function __construct($opts) {
-		$this->defined_attrs();
-		$opts = (array) $opts;
+	// ALL attributes passed are set (to allow for some transient properties)
+	// but only those that are declared will pass thru validation and be allowed to persist
+	function __construct($opts = null) {
+		$attrs = $this->defined_attrs();
+		$opts = array_merge($this->defaults(), (array) $opts);
 		foreach ($opts as $key => $value) {
 			$this->$key = $value;
 		}
@@ -161,6 +162,18 @@ abstract class ABT_Model_Base {
 			$this->$key = null;
 		}
 		return $model_attrs;
+	}
+	
+	// return an array of all declared attributes and their default values if provided
+	public function defaults() {
+		if ($this->_defaults) return $this->_defaults;
+		$attrs = $this->defined_attrs();
+		$defaults = array_map(
+			create_function('$attr', 'return isset($attr[\'default\']) ? $attr[\'default\'] : null;'),
+			$attrs
+		);
+		$this->_defaults = $defaults;
+		return $defaults;
 	}
 	
 	// bool, check whether the model has a certain declared attribute

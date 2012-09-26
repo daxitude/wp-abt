@@ -1,9 +1,11 @@
 <?php
 /*
-Plugin Name: AB Testing
-Description: A/B test your WordPress Pages
+Plugin Name: A/B Tests for WP
+Description: Increase conversions by running A/B content experiments right from your WordPress admin.
 Version: 0.2
 Author: daxitude
+Author URI: http://github.com/daxitude/
+Plugin URI: http://github.com/daxitude/wp-abt
 */
 
 // define path constants

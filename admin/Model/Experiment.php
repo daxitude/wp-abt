@@ -23,8 +23,8 @@ class ABT_Model_Experiment extends ABT_Model_Base {
 	public $start_date;
 	public $end_date;
 	public $status;
-	public $effect;
-	public $confidence;
+	public $effect = array('default' => 10);
+	public $confidence = array('default' => 0.9);
 	public $goal_page_id = array('required' => true);
 	public $goal_name = array('required' => true);
 
@@ -266,6 +266,7 @@ class ABT_Model_Experiment extends ABT_Model_Base {
 	
 	// calculate number of days to specified confidence level
 	// http://blog.marketo.com/blog/2007/10/landing-page-1.html
+	// uses 0.8 for the Power
 	public function days_to_confidence() {
 		if ( $this->days_running() < 4 || $this->total_visits() < 10 || $this->total_conversions() < 2 ) return false;
 		$num_vars = $this->num_variations();
@@ -273,7 +274,7 @@ class ABT_Model_Experiment extends ABT_Model_Base {
 		$evd = ($this->total_visits() / $this->days_running());
 		$de = $this->effect / 100;
 		$conf = $this->confidence;
-		$numer = 2 * $num_vars * POW(( $this->p_to_z($conf + (1 - $conf)/2) + $this->p_to_z($conf) ), 2) * (1 - $ecr);
+		$numer = 2 * $num_vars * POW(( $this->p_to_z($conf + (1 - $conf)/2) + $this->p_to_z(0.8) ), 2) * (1 - $ecr);
 		$denom = POW($de, 2) * $evd * $ecr;
 		$days = $numer / $denom;
 		return round($days);
