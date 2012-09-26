@@ -120,13 +120,14 @@ abstract class ABT_View_Base {
 			'id' => '',
 			'show_option_none' => '',
 			'show_option_no_change' => '',
-			'option_none_value' => ''
+			'option_none_value' => '',
+			'exclude' => ''
 		);
 
 		$r = wp_parse_args( $args, $defaults );
 		extract( $r, EXTR_SKIP );
 
-		$pages = get_posts(array('post_type' => $r['post_type'], 'numberposts' => -1));
+		$pages = get_posts(array('post_type' => $post_type, 'numberposts' => -1, 'exclude' => $exclude));
 		$output = '';
 		// Back-compat with old system where both id and name were based on $name argument
 		if ( empty($id) )

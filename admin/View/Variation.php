@@ -52,7 +52,7 @@ class ABT_View_Variation extends ABT_View_Base {
 		$option_label = $pt_object->labels->singular_name;
 		
 		$post_ids = ABT_Model_Variation::get_post_ids();
-		
+
 		$list =  $this->dropdown_posts(
 			array(
 				'post_type' => $post_type,
