@@ -9,7 +9,7 @@
 abstract class ABT_DB {
 	
 	// current plugin version to check against for db migrations 
-	public static $version = 0.20;
+	public static $version = 0.3;
 	
 	public static function init() {
 		// do an "install" if the plugin version stored in wp_options doesn't match
@@ -38,7 +38,8 @@ abstract class ABT_DB {
 			effect tinyint(11) NOT NULL default '10',			
 			goal_page_id bigint(20) unsigned NOT NULL default '0',
 			goal_name varchar(255) NOT NULL default '',
-			PRIMARY KEY  (id)
+			PRIMARY KEY  (id),
+			KEY goal_page_id (goal_page_id)
 		" );
 		
 		self::abt_install_table( 'abt_variations', "
