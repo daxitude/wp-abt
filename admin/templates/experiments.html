@@ -34,7 +34,7 @@
 						<span class="delete"><a data-notice href="?page=abt_experiment&amp;action=delete&amp;experiment[id]={{id}}&amp;_nonce={{_nonce}}">Delete</a></span>
 					</div>
 				</td>
-				<td class="">{{{status_text}}}</td>
+				<td class="">{{#status_txt}}{{id}}{{/status_txt}}</td>
 				<td class="">{{total_visits}}</td>
 				<td class="">{{total_conversions}}</td>
 				<td class=""><a href="{{goal_page_link}}" title="">{{goal_name}} ({{post_title}})</a></td>

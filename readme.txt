@@ -17,7 +17,7 @@ Contributors: daxitude
 Tags: a/b testing, metrics, a/b test
 Requires at least: 3.4
 Tested up to: 3.4.2
-Stable tag: 0.3
+Stable tag: 0.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -48,7 +48,7 @@ tbd
 * unit testing (not exactly tdd here :/)
 * documentation
 * additional test types eg theme, css, js, multivariate
-* trying this algo for serving variations?: http://stevehanov.ca/blog/index.php?id=132
+* choose an algorithm for serving variations (maybe http://stevehanov.ca/blog/index.php?id=132, or http://jeffbollinger.net/2010/08/ab-testing-sample-sizes-the-convergence-method/)
 * validation - enforce uniqueness on variation.post_id
 * "test mode" - run without cookies so that visits/conversions can be simulated
 * maybe don't use as many rows in wp_options ?
@@ -59,3 +59,4 @@ tbd
 * filter traffic from bots??
 * store visits/conversions individually so time trends can be observed
 * pagination for the experiments page
+* could use post meta to configure and store variation and conversion information. wouldn't even need the variations table??

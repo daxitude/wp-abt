@@ -1,7 +1,7 @@
 <?php
 
 /*
- * singleton-ish class for pass data to Mustache to render
+ * singleton-ish class for passing data to Mustache to render
  */
 abstract class ABT_Mustache {
 
@@ -22,7 +22,8 @@ abstract class ABT_Mustache {
 				'loader' => new Mustache_Loader_FilesystemLoader(self::$dir, $m_opts),
 				'partials_loader' => new Mustache_Loader_FilesystemLoader(self::$dir, $m_opts),
 				'helpers' => array(
-					'percent' => array(__class__, 'helper_percent')
+					'percent' => array(__class__, 'helper_percent'),
+					'format_date' => array(__class__, 'helper_format_date')
 				)
 			)
 		);
@@ -38,6 +39,13 @@ abstract class ABT_Mustache {
 	
 	public static function helper_percent($num, $mustache) {
 		return $mustache->render($num) * 100 . "%";
+	}
+	
+	// formatter for dates
+	public static function helper_format_date($date, $mustache) {
+		// silly php bug strtotime not returning false for '0000..' mysql null val
+		$date = strtotime($mustache->render($date));
+		return $date > 0 ? date('D, M d g:h a', $date) : '--';
 	}
 }
 

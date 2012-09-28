@@ -89,13 +89,14 @@ var ABT = {};
 	// 			confidence level, anticipated views/day
 	// 0.8 is used for the Power (type II/beta error)
 	var daysToConfidence = function (opts) {
-		var numer, denom, days;
+		var numer, denom, num, days;
 		opts.convRate = opts.convRate / 100;	
 		opts.effect = opts.effect / 100;	
 		numer = 2 * opts.vars * Math.pow(( p_to_z(opts.conf + (1 - opts.conf)/2) + 
 			p_to_z(0.8) ), 2) * (1 - opts.convRate);
-		denom = Math.pow(opts.effect, 2) * opts.views * opts.convRate;
-		days = numer / denom;
+		denom = Math.pow(opts.effect, 2) * opts.convRate;
+		num = numer / denom;		
+		days = num / opts.views;		
 		return Math.round(days);
 	}
 	// hook into jQuery to calculate on form change or submit

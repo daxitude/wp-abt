@@ -15,6 +15,7 @@ abstract class ABT_Model_Base {
 	// stores validation errors. array keys by model attribute
 	// accessible by public method errors()
 	private $_errors = null;
+	// holds default attribute values for the model. should access through defaults()
 	private $_defaults = null;
 	
 	// when a model is instantiated an array of attributes can be passed.

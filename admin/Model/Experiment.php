@@ -13,7 +13,8 @@
 	effect tinyint(11) NOT NULL default '10',			
 	goal_page_id bigint(20) unsigned NOT NULL default '0',
 	goal_name varchar(255) NOT NULL default '',
-	PRIMARY KEY  (id)
+	PRIMARY KEY  (id),
+	KEY goal_page_id (goal_page_id)
 */
 class ABT_Model_Experiment extends ABT_Model_Base {
 	
@@ -33,6 +34,11 @@ class ABT_Model_Experiment extends ABT_Model_Base {
 	const RUNNING = 1;
 	const COMPLETED = 2;
 	private static $statuses = array('Ready', 'Running', 'Completed');
+	
+	// private attributes to cache results from db
+	private $_num_variations = false;
+	private $_total_visits = false;
+	private $_total_conversions = false;
 	
 	// table name in db
 	protected static $table_name = 'experiments';
@@ -143,27 +149,9 @@ class ABT_Model_Experiment extends ABT_Model_Base {
 		return get_permalink($this->goal_page_id);
 	}
 	
-	// HTML in the model? I know this smells, but the logiclessness of Mustache is throwing
-	// me for a loop. For now, this is the fastest and easiest way to get this done.
+	// map the integer value of the status to a more explanatory text version
 	public function status_text() {
-		$text = self::$statuses[$this->status];
-		switch ($this->status) {
-			case '0':
-				$text = ($this->num_variations() < 2) ?
-					'<strong class="label badge warning">&nbsp;!&nbsp;</strong> &nbsp;<em>Please create at least 2 variations.</em>' :
-					'<strong class="label badge info">✓</strong> &nbsp;' . $text;
-				break;
-			case '1':
-				$text = '<strong class="label">' . $text . '</strong>';
-				$text .= ($this->days_needed()) ?
-					' &nbsp;Approximately ' . $this->days_needed() .
-						' days needed.' :
-					' &nbsp;Need more data.';
-				break;
-			case '2':
-				$text .= ' in ' . $this->days_running() . ' days.';
-				break;
-		}	
+		$text = self::$statuses[$this->status];	
 		return $text;
 	}
 	
@@ -181,6 +169,7 @@ class ABT_Model_Experiment extends ABT_Model_Base {
 	// if result = 0 and set the first saved variation as the Base variation. also 
 	// used to verify variation count for status transitions
 	public function num_variations() {
+		if ($this->_num_variations) return $this->_num_variations;
 		$db = self::get_db();
 		$tables = self::get_db_tables();		
 		$vars = $db->get_row(
@@ -189,6 +178,7 @@ class ABT_Model_Experiment extends ABT_Model_Base {
 				WHERE p.experiment_id = $this->id"
 			)
 		);
+		$this->num_variations = $vars->total;
 		return $vars->total;
 	}
 	
@@ -199,26 +189,10 @@ class ABT_Model_Experiment extends ABT_Model_Base {
 	public function is_running() {
 		return (int) $this->status == self::RUNNING;
 	}
-	
-	// formatters for dates. @oof for putting in model, but with logiclessness
-	// of Mustache templates, this seems to be the fastest and easiest way
-	public function format_date($date) {
-		// silly php bug strtotime not returning false for '0000..' mysql null val
-		$date = strtotime($date);
-		return $date > 0 ? date('D, M d g:h a', $date) : '--';
-	}
-	
-	public function start_date_f() {
-		return $this->format_date($this->start_date);
-	}
-	
-	public function end_date_f() {
-		return $this->format_date($this->end_date);
-	}
 
 	// calculate total experiment visits as a sum of all variations' visits
 	public function total_visits() {
-		if (isset($this->total_visits)) return $this->total_visits;
+		if ($this->_total_visits) return $this->_total_visits;
 		$db = self::get_db();
 		$tables = self::get_db_tables();
 		$exp = $db->get_row(
@@ -228,13 +202,13 @@ class ABT_Model_Experiment extends ABT_Model_Base {
 				WHERE p.experiment_id = $this->id"
 			)
 		);
-		$this->total_visits = $exp->total_visits;
+		$this->_total_visits = $exp->total_visits;
 		return $exp->total_visits;
 	}
 	
 	// calculate total experiment conversions as a sum of all variations' conversions
 	public function total_conversions() {
-		if (isset($this->total_conversions)) return $this->total_conversions;
+		if ($this->_total_conversions) return $this->_total_conversions;
 		$db = self::get_db();
 		$tables = self::get_db_tables();
 		$exp = $db->get_row(
@@ -244,7 +218,7 @@ class ABT_Model_Experiment extends ABT_Model_Base {
 				WHERE p.experiment_id = $this->id"
 			)
 		);
-		$this->total_conversions = $exp->total_conversions;
+		$this->_total_conversions = $exp->total_conversions;
 		return $exp->total_conversions;
 	}
 	
@@ -255,38 +229,44 @@ class ABT_Model_Experiment extends ABT_Model_Base {
 				$days = 0;
 				break;
 			case '1':
-				$days = round((date('U') - date('U', strtotime($this->start_date))) / (60*60*24));
+				$days = floor((date('U') - date('U', strtotime($this->start_date))) / (60*60*24));
 				break;
 			case '2':
-				$days = round((date('U', strtotime($this->end_date)) - date('U', strtotime($this->start_date))) / (60*60*24));
+				$days = round((date('U', strtotime($this->end_date)) - 
+					date('U', strtotime($this->start_date))) / (60*60*24));
 				break;
 		}
-		return $days;
+		return $days == 0 ? false : $days;
 	}
 	
-	// http://www.evanmiller.org/how-not-to-run-an-ab-test.html
+	// http://www.evanmiller.org/how-not-to-run-an-ab-test.html <- effect formula has an error?
+	// http://blog.marketo.com/blog/2007/10/landing-page-1.html <- using this one
 	public function detectable_effect() {
 		$visits = $this->total_visits();
 		$conv = $this->total_conversions();
 		if ($visits < 1 || $conv < 1) return false;
 		$rate = $conv / $visits;
 		$conf = $this->confidence;
-		$eff = ( ABT_Util_Stats::ptz($conf + (1 - $conf)/2) + ABT_Util_Stats::ptz(0.8) ) * 
-			SQRT($rate * (1 - $rate)) * SQRT(2 / $visits);
-
-		return round($eff, 3);
+//		$eff = ( ABT_Util_Stats::ptz($conf + (1 - $conf)/2) + ABT_Util_Stats::ptz(0.8) ) * 
+//			SQRT($rate * (1 - $rate)) * SQRT(2 / $visits);
+			
+		$eff = ( ABT_Util_Stats::ptz($conf + (1 - $conf)/2) + ABT_Util_Stats::ptz(0.8) ) *
+			SQRT( (2 * $this->num_variations() * (1 - $rate)) / ($rate * $visits) );
+		
+		return min(round($eff, 3), 1);
 	}
 	
+	// http://blog.marketo.com/blog/2007/10/landing-page-1.html <- using this one
 	public function visits_needed() {
 		$visits = $this->total_visits();
 		if ($visits < 1) return false;
 		$de = $this->effect / 100;
-		$conf = $this->confidence;		
-		$ecr = $this->total_conversions() / $visits;
-		$total_needed = round(( (2 * POW(( ABT_Util_Stats::ptz($conf + (1 - $conf)/2)
-			+ ABT_Util_Stats::ptz(0.8) ), 2) * $ecr * (1 - $ecr)) / POW($de, 2) ), 0);
-		
-		$visits_left = $total_needed - $this->total_visits();
+		$conf = $this->confidence;
+		$vars = $this->num_variations();
+		$cr = $this->total_conversions() / $visits;
+		$total_needed = round((2 * $vars * POW( ( ABT_Util_Stats::ptz($conf + (1 - $conf)/2) +
+			ABT_Util_Stats::ptz(0.8) ), 2 ) * (1 - $cr)) / (POW($de, 2) * $cr));
+		$visits_left = $total_needed - $visits;
 		return max($visits_left, 0);
 	}
 	

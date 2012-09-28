@@ -43,10 +43,34 @@ class ABT_View_Experiment extends ABT_View_Base {
 				'_nonce' => $this->generate_nonce(),
 				'flash' => $this->flash->get(),
 				'isNew' => $req->id ? false : true,
-				'pages' => array(&$this, 'list_pages')
+				'pages' => array($this, 'list_pages'),
+				'status_txt'=> array($this, 'status_txt')
 			)
 		);
 	}
+	
+	function status_txt($status, $mustache) {
+		switch ($this->exp->status) {
+			case '0':
+				$status = ($this->exp->num_variations() < 2) ?
+					'<strong class="label badge warning">&nbsp;!&nbsp;</strong> &nbsp;<em>Please create at least 2 variations.</em>' :
+					'<strong class="label badge info">✓</strong> &nbsp;' . $status;
+				break;
+			case '1':
+				$status = '<strong class="label">' . $status . '</strong>';
+				$status .= ($this->exp->days_needed()) ?
+					' &nbsp;Approximately ' . $this->exp->days_needed() .
+						' days needed.' :
+					' &nbsp;Need more data.';
+				break;
+			case '2':
+				$status .= ' in ' . $this->exp->days_running() . ' days.';
+				break;
+		}
+		return $status;
+	}
+	
+	
 	// renders a dropdown <select> of wp pages for choosing a goal page
 	function list_pages($id = null) {
 		$post_type = 'page';//$this->$goal_post_type;

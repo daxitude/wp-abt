@@ -9,7 +9,7 @@
 abstract class ABT_DB {
 	
 	// current plugin version to check against for db migrations 
-	public static $version = 0.3;
+	public static $version = 0.4;
 	
 	public static function init() {
 		// do an "install" if the plugin version stored in wp_options doesn't match

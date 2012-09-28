@@ -2,7 +2,7 @@
 /*
 Plugin Name: A/B Tests for WP
 Description: Increase conversions by running A/B content experiments right from your WordPress admin.
-Version: 0.3
+Version: 0.4
 Author: daxitude
 Author URI: http://github.com/daxitude/
 Plugin URI: http://github.com/daxitude/wp-abt

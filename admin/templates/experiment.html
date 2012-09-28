@@ -4,7 +4,7 @@
 		{{^isNew}}A/B Tests - {{exp.experiment_name}} Experiment{{/isNew}}
 		{{#isNew}}A/B Tests - New Experiment{{/isNew}}
 	</h2>
-	{{> _error_banner}}	
+	{{> _error_banner}}
 	<div id="poststuff">
 		<div id="post-body" class="metabox-holder columns-2">
 			<div id="postbox-container-2" class="postbox-container">
@@ -26,18 +26,18 @@
 								{{^isNew}}
 								<tr valign="top">
 									<th scope="row">Start Date</th>
-									<td>{{exp.start_date_f}}</td>
+									<td>{{#format_date}}{{exp.start_date}}{{/format_date}}</td>
 								</tr>
 
 								<tr valign="top">
 									<th scope="row">End Date</th>
-									<td>{{exp.end_date_f}}</td>
+									<td>{{#format_date}}{{exp.end_date}}{{/format_date}}</td>
 								</tr>
 
 								<tr valign="top">
 									<th scope="row">Status</th>
 									<td>
-										{{{exp.status_text}}}
+										{{#status_txt}}{{exp.status_text}}{{/status_txt}}
 										<input type="hidden" name="experiment[status]" value="{{exp.status}}">
 										{{#exp.can_start}}
 										&nbsp; <a class="button-primary" data-notice="Confirm: ready to start the experiment!" href="?page=abt_experiment&amp;action=update&amp;experiment[id]={{exp.id}}&amp;experiment[status]=1&amp;_nonce={{_nonce}}">Start</a>
@@ -91,14 +91,16 @@
 								<input name="experiment[effect]" type="text" size="4" value="{{exp.effect}}" class="appended"><span class="append">%</span>
 								<br>
 							</p>
-							{{#exp.is_running}}
+							{{^exp.is_ready}}
 							<p>Detectable Effect</p>
 							<p>
 								<span class="label">{{#percent}}{{exp.detectable_effect}}{{/percent}}</span>
 							</p>
+							{{/exp.is_ready}}
+							{{#exp.is_running}}
 							{{#exp.detectable_effect}}
 							<p class="description">
-								About <strong>{{exp.visits_needed}}</strong> more visits are needed in order to be {{#percent}}{{exp.confidence}}{{/percent}} confident in the detectable effect. This will take roughly <strong>{{exp.days_needed}}</strong> days at the current rate of visits per day.
+								About <strong>{{exp.visits_needed}}</strong> more visits are needed in order to be {{#percent}}{{exp.confidence}}{{/percent}} confident in the detectable effect.{{#exp.days_running}} This will take roughly <strong>{{exp.days_needed}}</strong> days at the current rate of visits per day.{{/exp.days_running}}
 							</p>
 							{{/exp.detectable_effect}}
 							{{/exp.is_running}}
