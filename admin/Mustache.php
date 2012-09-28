@@ -20,7 +20,10 @@ abstract class ABT_Mustache {
 		self::$engine = new Mustache_Engine(
 			array(
 				'loader' => new Mustache_Loader_FilesystemLoader(self::$dir, $m_opts),
-				'partials_loader' => new Mustache_Loader_FilesystemLoader(self::$dir, $m_opts)
+				'partials_loader' => new Mustache_Loader_FilesystemLoader(self::$dir, $m_opts),
+				'helpers' => array(
+					'percent' => array(__class__, 'helper_percent')
+				)
 			)
 		);
 	}
@@ -31,6 +34,10 @@ abstract class ABT_Mustache {
 	
 	public static function template_path() {
 		return self::$dir;
+	}
+	
+	public static function helper_percent($num, $mustache) {
+		return $mustache->render($num) * 100 . "%";
 	}
 }
 

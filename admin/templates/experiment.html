@@ -89,7 +89,19 @@
 							<p>
 								<label class="screen-reader-text" for="experiment[effect]">Desired Observed Effect</label>
 								<input name="experiment[effect]" type="text" size="4" value="{{exp.effect}}" class="appended"><span class="append">%</span>
+								<br>
 							</p>
+							{{#exp.is_running}}
+							<p>Detectable Effect</p>
+							<p>
+								<span class="label">{{#percent}}{{exp.detectable_effect}}{{/percent}}</span>
+							</p>
+							{{#exp.detectable_effect}}
+							<p class="description">
+								About <strong>{{exp.visits_needed}}</strong> more visits are needed in order to be {{#percent}}{{exp.confidence}}{{/percent}} confident in the detectable effect. This will take roughly <strong>{{exp.days_needed}}</strong> days at the current rate of visits per day.
+							</p>
+							{{/exp.detectable_effect}}
+							{{/exp.is_running}}
 					</div>
 				</div>
 			</div>

@@ -132,14 +132,14 @@ class ABT_Model_Variation extends ABT_Model_Base {
 	
 	// calc conversion rate
 	public function rate() {
-		return ($this->visits > 0) ? round($this->conversions / $this->visits, 4) * 100 .'%' : 0;
+		return ($this->visits > 0) ? round($this->conversions / $this->visits, 4) : 0;
 	}
 	
 	public function compare_to_base() {
 		if ($this->base) return '--';
 		$base = $this->get_base_variation($this->experiment_id);
 		$base_cr = $base->rate();
-		return ($base_cr > 0) ? round(( $this->rate() - $base_cr ) / $base_cr, 2) * 100 . '%' : '0.0%';
+		return ($base_cr > 0) ? round(( $this->rate() - $base_cr ) / $base_cr, 2) : 0;
 	}
 	
 	// get the page's permalink
@@ -176,37 +176,34 @@ class ABT_Model_Variation extends ABT_Model_Base {
 	}
 	
 	// calc std normal distribution val for a given z-score
-	private function norm_dist($x) {
-		$d1 = 0.0498673470;
-		$d2 = 0.0211410061;
-		$d3 = 0.0032776263;
-		$d4 = 0.0000380036;
-		$d5 = 0.0000488906;
-		$d6 = 0.0000053830;
-
-		$a = abs($x);
-		$t = 1.0 + $a * ($d1 + $a * ($d2 + $a * ($d3 + $a * ($d4 + $a * ($d5 + $a * $d6)))));
-		$t = $t * $t;
-		$t = $t * $t;
-		$t = $t * $t;
-		$t = $t * $t;
-		$t = 1.0 / (2 * $t);
-		if ($x > 0) $t = 1 - $t;
-		return $t;
+	// http://stackoverflow.com/questions/5259421/cumulative-distribution-function-in-javascript
+	private function norm_dist($m, $s, $t) {
+		$z = ($t - $m) / SQRT( 2 * $s * $s );
+		$t = 1 / ( 1 + 0.3275911 * abs($z) );
+		$a1 =  0.254829592;
+		$a2 = -0.284496736;
+		$a3 =  1.421413741;
+		$a4 = -1.453152027;
+		$a5 =  1.061405429;
+		$erf = 1 - ((((($a5 * $t + $a4) * $t) + $a3) * $t + $a2) * $t + $a1) * $t * EXP(-$z*$z);
+		if ( $z < 0 ) $erf = $erf * -1;
+		return 0.5 * (1 + $erf);
 	}
 	
-	// calc a p-value
-	public function p_value() {
+	// calc confidence level
+	public function confidence_level() {
 		$base = self::get_base_variation($this->experiment_id);
+		$exp = ABT_Model_Experiment::by_id($this->experiment_id);
+		$expconf = $exp->confidence;
+		
 		if ($this->base || $this->visits < 15 || $base->visits < 15) return '--';
-		$base_conv_rate = $base->conversions / $base->visits;
-		$var_conv_rate = $this->conversions / $this->visits;
-		$var_std_err = SQRT( $base_conv_rate * (1 - $base_conv_rate) / $base->visits + $var_conv_rate * (1 - $var_conv_rate) / $this->visits ); 
-		$var_z_score = ($base_conv_rate - $var_conv_rate) / $var_std_err;
-		$p_value = $this->norm_dist($var_z_score);
-		return round($p_value, 3) * 100 . '%';
+		$base_conv_rate = $base->rate();
+		$var_conv_rate = $this->rate();
+		$variance = ABT_Util_Stats::ptz($expconf + (1 - $expconf) / 2) *
+			SQRT( $base_conv_rate * (1 - $base_conv_rate) / $base->visits );
+		$conf = $this->norm_dist($base_conv_rate, $variance, $var_conv_rate);
+		return round($conf, 3);
 	}
-	
 	
 	/*
 	 * these 4 methods wont' work < php 5.3 (no static:: or get_called_class())

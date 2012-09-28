@@ -113,6 +113,6 @@ var ABT = {};
 	});
 	
 	// on load, calculate with defaults and fill in the result field
-	$('#days-to-confidence').trigger('change');
+	$('#days-to-confidence').trigger('change');	
 	
 })(jQuery);

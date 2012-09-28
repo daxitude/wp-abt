@@ -11,7 +11,7 @@
 	<td class=""><a href="{{get_page_link}}" title="">{{post_title}}</a></td>
 	<td class="">{{visits}}</td>
 	<td class="">{{conversions}}</td>
-	<td class="">{{rate}}</td>
-	<td class="">{{compare_to_base}}</td>
-	<td class="">{{p_value}}</td>
+	<td class="">{{#percent}}{{rate}}{{/percent}}</td>
+	<td class="">{{#percent}}{{compare_to_base}}{{/percent}}</td>
+	<td class="">{{#percent}}{{confidence_level}}{{/percent}}</td>
 </tr>

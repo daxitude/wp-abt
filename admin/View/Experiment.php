@@ -43,8 +43,7 @@ class ABT_View_Experiment extends ABT_View_Base {
 				'_nonce' => $this->generate_nonce(),
 				'flash' => $this->flash->get(),
 				'isNew' => $req->id ? false : true,
-				'pages' => array(&$this, 'list_pages'),
-				'status_html' => create_function('$txt', 'return ABT_Experiment_Page::status_html($txt);')
+				'pages' => array(&$this, 'list_pages')
 			)
 		);
 	}

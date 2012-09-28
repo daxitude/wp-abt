@@ -155,10 +155,10 @@ class ABT_Model_Experiment extends ABT_Model_Base {
 				break;
 			case '1':
 				$text = '<strong class="label">' . $text . '</strong>';
-				$text .= ($this->days_to_confidence()) ?
-					' Approximately ' . max((int)$this->days_to_confidence() - (int)$this->days_running(), 0) .
-						' days remaining.' :
-					' Need more data to estimate time remaining.';
+				$text .= ($this->days_needed()) ?
+					' &nbsp;Approximately ' . $this->days_needed() .
+						' days needed.' :
+					' &nbsp;Need more data.';
 				break;
 			case '2':
 				$text .= ' in ' . $this->days_running() . ' days.';
@@ -264,80 +264,42 @@ class ABT_Model_Experiment extends ABT_Model_Base {
 		return $days;
 	}
 	
+	// http://www.evanmiller.org/how-not-to-run-an-ab-test.html
+	public function detectable_effect() {
+		$visits = $this->total_visits();
+		$conv = $this->total_conversions();
+		if ($visits < 1 || $conv < 1) return false;
+		$rate = $conv / $visits;
+		$conf = $this->confidence;
+		$eff = ( ABT_Util_Stats::ptz($conf + (1 - $conf)/2) + ABT_Util_Stats::ptz(0.8) ) * 
+			SQRT($rate * (1 - $rate)) * SQRT(2 / $visits);
+
+		return round($eff, 3);
+	}
+	
+	public function visits_needed() {
+		$visits = $this->total_visits();
+		if ($visits < 1) return false;
+		$de = $this->effect / 100;
+		$conf = $this->confidence;		
+		$ecr = $this->total_conversions() / $visits;
+		$total_needed = round(( (2 * POW(( ABT_Util_Stats::ptz($conf + (1 - $conf)/2)
+			+ ABT_Util_Stats::ptz(0.8) ), 2) * $ecr * (1 - $ecr)) / POW($de, 2) ), 0);
+		
+		$visits_left = $total_needed - $this->total_visits();
+		return max($visits_left, 0);
+	}
+	
 	// calculate number of days to specified confidence level
 	// http://blog.marketo.com/blog/2007/10/landing-page-1.html
 	// uses 0.8 for the Power
-	public function days_to_confidence() {
-		if ( $this->days_running() < 4 || $this->total_visits() < 10 || $this->total_conversions() < 2 ) return false;
-		$num_vars = $this->num_variations();
-		$ecr = $this->total_conversions() / $this->total_visits();
-		$evd = ($this->total_visits() / $this->days_running());
-		$de = $this->effect / 100;
-		$conf = $this->confidence;
-		$numer = 2 * $num_vars * POW(( $this->p_to_z($conf + (1 - $conf)/2) + $this->p_to_z(0.8) ), 2) * (1 - $ecr);
-		$denom = POW($de, 2) * $evd * $ecr;
-		$days = $numer / $denom;
-		return round($days);
-	}
-	
-	// private, convert a p-value to a z-score with a std normal distribution
-	// http://www.fourmilab.ch/rpkp/experiments/analysis/zCalc.html
-	private function p_to_z($p) {
-		$Z_EPSILON = 0.000001;     /* Accuracy of z approximation */
-	    $minz = -6;
-	    $maxz = 6;
-	    $zval = 0;
-	    $pval;
-
-	    if ( $p < 0 || $p > 1) return -1;
-
-	    while ( ($maxz - $minz) > $Z_EPSILON ) {
-	        $pval = $this->poz($zval);
-	
-	        if ($pval > $p) {
-	            $maxz = $zval;
-	        } else {
-	            $minz = $zval;
-	        }
-	        $zval = ($maxz + $minz) * 0.5;
-	    }
-	    return $zval;
-	}
-
-	// http://www.fourmilab.ch/rpkp/experiments/analysis/zCalc.html
-	private function poz($z) {
-		$z_max = 6;
-		
-	    if ($z == 0) {
-	        $x = 0;
-	    } else {
-	        $y = 0.5 * abs($z);
-	
-	        if ( $y > ($z_max * 0.5) ) {
-	            $x = 1;
-	
-	        }
-			else if ( $y < 1 ) {
-	            $w = $y * $y;
-	            $x = ((((((((0.000124818987 * $w
-	                     - 0.001075204047) * $w + 0.005198775019) * $w
-	                     - 0.019198292004) * $w + 0.059054035642) * $w
-	                     - 0.151968751364) * $w + 0.319152932694) * $w
-	                     - 0.531923007300) * $w + 0.797884560593) * $y * 2;
-	        }
-			else {
-	            $y -= 2.0;
-	            $x = (((((((((((((-0.000045255659 * $y
-	                           + 0.000152529290) * $y - 0.000019538132) * $y
-	                           - 0.000676904986) * $y + 0.001390604284) * $y
-	                           - 0.000794620820) * $y - 0.002034254874) * $y
-	                           + 0.006549791214) * $y - 0.010557625006) * $y
-	                           + 0.011630447319) * $y - 0.009279453341) * $y
-	                           + 0.005353579108) * $y - 0.002141268741) * $y
-	                           + 0.000535310849) * $y + 0.999936657524;
-	        }
-	    }
-	    return $z > 0 ? ( ($x + 1) * 0.5 ) : ( (1 - $x) * 0.5 );
+	public function days_needed() {
+		$total_visits = $this->total_visits();
+		$days_running = $this->days_running();
+		if ($total_visits < 1 || $days_running < 1) return '_?_';
+		$visits_per_day = ($total_visits / $days_running);
+		$days_rm = $this->visits_needed() / $visits_per_day;
+		return round(max($days_rm, 0));
 	}
 	
 	/*
